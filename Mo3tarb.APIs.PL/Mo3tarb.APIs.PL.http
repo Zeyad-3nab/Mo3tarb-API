@@ -1,0 +1,6 @@
+@Mo3tarb.APIs.PL_HostAddress = http://localhost:5225
+
+GET {{Mo3tarb.APIs.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
