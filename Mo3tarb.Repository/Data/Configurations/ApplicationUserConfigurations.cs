@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.API.DAL.Data.Configurations
 {
-    public class ApplicationUserConfiguration :IEntityTypeConfiguration<AppUser>
+    public class ApplicationUserConfigurations :IEntityTypeConfiguration<AppUser>
     {
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {

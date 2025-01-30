@@ -20,6 +20,8 @@ namespace Mo3tarb.APIs.Extensions
 		{
 			Services.AddScoped(typeof(IGenaricRepository<Apartment>), (typeof(ApartmentRepository)));
 			Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+			Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+			Services.AddScoped<ICommentRepository, CommentRepository>();
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
            
 

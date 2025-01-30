@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.PL.Errors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
@@ -26,15 +27,15 @@ namespace Mo3tarb.APIs.PL.Controllers
             _apartmentRepository = apartmentRepository;
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartments() 
         {
             var Apartments = await _apartmentRepository.GetAllAsync();
                 return Ok(Apartments);
         }
-     
 
+        [AllowAnonymous]
         [HttpGet("{Id}")]
         public async Task<ActionResult<Apartment>> GetApartmentById(int Id) 
         {
@@ -44,7 +45,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         }
 
 
-
+        //[Authorize(Roles ="Semsar")]
         [HttpPost]
         public async Task<ActionResult> Add(ApartmentDTO apartmentDTO) 
         {

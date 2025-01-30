@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mo3tarb.Repository.Data;
 
@@ -11,9 +12,11 @@ using Mo3tarb.Repository.Data;
 namespace Mo3tarb.Repository.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250130012059_Add Comment")]
+    partial class AddComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,24 +167,6 @@ namespace Mo3tarb.Repository.Data.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Mo3tarb.Core.Entities.Favourite", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("apartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId", "apartmentId");
-
-                    b.HasIndex("apartmentId");
-
-                    b.ToTable("Favourites");
-                });
-
             modelBuilder.Entity("Mo3tarb.Core.Models.Apartment", b =>
                 {
                     b.Property<int>("Id")
@@ -271,25 +256,6 @@ namespace Mo3tarb.Repository.Data.Migrations
                     b.Navigation("Apartment");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Mo3tarb.Core.Entities.Favourite", b =>
-                {
-                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mo3tarb.Core.Models.Apartment", "apartment")
-                        .WithMany()
-                        .HasForeignKey("apartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("apartment");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Models.Apartment", b =>

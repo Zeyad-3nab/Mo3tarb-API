@@ -20,11 +20,7 @@ namespace Talabat.API.Extensions
 			services.AddScoped<ITokenService,TokenServices>();
 			services.AddScoped<IApartmentRepository,ApartmentRepository>();
 			services.AddScoped<IDepartmentRepository,DepartmentRepository>();
-            //Add Swagger Extention
-            services.AddSwaggerGenJwtAuth();
-
-            //Add Custom Extention
-            services.AddCustomJwtAuth(configuration);
+           
 
 
 
@@ -53,7 +49,8 @@ namespace Talabat.API.Extensions
 
             services.AddIdentity<AppUser, IdentityRole>()
 							.AddEntityFrameworkStores<AppIdentityDbContext>();
-			return services;
+
+            return services;
 
 		}
 

@@ -53,6 +53,16 @@ namespace Mo3tarb.APIs.Controllers
         }
 
 
+        [HttpGet("SearchByName")]
+        public async Task<ActionResult<IEnumerable<RegisterDto>>> SearchByName(string Name)
+        {
+            var users = await _userManager.Users.Where(u=>u.NormalizedUserName.Contains(Name.ToUpper())).ToListAsync();
+            var map = _mapper.Map<IEnumerable<RegisterDto>>(users);
+            return Ok(map);
+        }
+
+
+        [AllowAnonymous]
         [HttpGet("GetUserById")]
         public async Task<ActionResult<RegisterDto>> GetUserById(string userId)
         {
@@ -76,50 +86,71 @@ namespace Mo3tarb.APIs.Controllers
                      .ToList()));
         }
 
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null) return Unauthorized(new ApiErrorResponse(401 , "User with this Email is not found"));
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return Unauthorized(new ApiErrorResponse(401 , "Password is InCorrect"));
-
-            return Ok(new UserDto()
+            if (ModelState.IsValid)
             {
-                UserName = user.UserName,
-                Email = user.Email,
-                Token = await _tokenServices.CreateTokenAsync(user, _userManager)
-            });
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null) return Unauthorized(new ApiErrorResponse(401, "User with this Email is not found"));
+                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                if (!result.Succeeded) return Unauthorized(new ApiErrorResponse(401, "Password is InCorrect"));
+
+                return Ok(new UserDto()
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Token = await _tokenServices.CreateTokenAsync(user, _userManager)
+                });
+            }
+            return BadRequest(new ApiValidationResponse(400
+               , "a bad Request , You have made"
+               , ModelState.Values
+               .SelectMany(v => v.Errors)
+               .Select(e => e.ErrorMessage)
+               .ToList()));
         }
 
         // Register
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> Register([FromBody]RegisterDto model)
         {
-            if (CheckEmailExists(model.Email).Result.Value) // هنا بيشوف لو الايميل بتاعي موجود ولا لا
+            if (ModelState.IsValid)
             {
-                return BadRequest(new ApiErrorResponse(400, "Email Is Already in Used"));
+                if (CheckEmailExists(model.Email).Result.Value) // هنا بيشوف لو الايميل بتاعي موجود ولا لا
+                {
+                    return BadRequest(new ApiErrorResponse(400, "Email Is Already in Used"));
+                }
+
+                var user = _mapper.Map<AppUser>(model);    //Map From AppUserDTO TO App User 
+
+                var Result = await _userManager.CreateAsync(user, model.Password);
+
+                if (!Result.Succeeded)
+                    return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+                    , "a bad Request , You have made"
+                    , Result.Errors.Select(e => e.Description).ToList())); //UnSaved
+
+                await _userManager.AddToRoleAsync(user, model.Type);
+
+                var ReturnedUser = new UserDto()
+                {
+
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Token = await _tokenServices.CreateTokenAsync(user, _userManager)
+                };
+                return Ok(ReturnedUser);
             }
-
-            var user = _mapper.Map<AppUser>(model);    //Map From AppUserDTO TO App User 
-
-            var Result = await _userManager.CreateAsync(user, model.Password);
-
-            if (!Result.Succeeded) 
-                return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest  
-                , "a bad Request , You have made"  
-                , Result.Errors.Select(e=>e.Description).ToList())); //UnSaved
-
-            await _userManager.AddToRoleAsync(user, model.Type);
-
-            var ReturnedUser = new UserDto()
-            {
-
-                UserName = user.UserName,
-                Email = user.Email,
-                Token = await _tokenServices.CreateTokenAsync(user, _userManager)
-            };
-            return Ok(ReturnedUser);
+            return BadRequest(new ApiValidationResponse(400
+                     , "a bad Request , You have made"
+                     , ModelState.Values
+                     .SelectMany(v => v.Errors)
+                     .Select(e => e.ErrorMessage)
+                     .ToList()));
         }
 
         // GetCurrentUser
@@ -169,7 +200,7 @@ namespace Mo3tarb.APIs.Controllers
         }
 
 
-
+        [AllowAnonymous]
         [HttpPost("SendEmail")]
         public async Task<ActionResult> SendEmail([DataType(DataType.EmailAddress)] string Email)
         {
@@ -200,6 +231,8 @@ namespace Mo3tarb.APIs.Controllers
                 .ToList()));
         }
 
+
+        [AllowAnonymous]
         [HttpPut("ChangePassword")]
         public async Task<ActionResult> ChangePassword([FromBody]UpdatePasswordDTO updatePasswordDTO)
         {
@@ -262,7 +295,7 @@ namespace Mo3tarb.APIs.Controllers
                              .ToList()));
         }
 
-
+        [AllowAnonymous]
         [HttpPost("AddToRole")]
         public async Task<IActionResult> AddToRole([FromBody] AddToRoleDTO addToRoleDTO)
         {

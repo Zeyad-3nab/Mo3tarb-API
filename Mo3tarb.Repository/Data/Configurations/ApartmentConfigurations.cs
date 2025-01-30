@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mo3tarb.Repository.Data.Configurations
 {
-    public class ApartmentConfiguration : IEntityTypeConfiguration<Apartment>
+    public class ApartmentConfigurations : IEntityTypeConfiguration<Apartment>
     {
         public void Configure(EntityTypeBuilder<Apartment> builder)  //builder as a apartment
         {

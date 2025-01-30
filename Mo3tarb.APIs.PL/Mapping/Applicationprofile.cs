@@ -4,6 +4,7 @@ using Mo3tarb.APIs.DTOs;
 using Mo3tarb.APIs.PL.DTOs;
 using Mo3tarb.Core.Entites;
 using Mo3tarb.Core.Entites.Identity;
+using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Models;
 
 namespace GraduationProject.API.PL.Mapping
@@ -19,6 +20,8 @@ namespace GraduationProject.API.PL.Mapping
             //CreateMap<Apartment, ApartmentDTO>();
 
 			CreateMap<Department, DepartmentDTO>().ReverseMap();
+			CreateMap<Comment, CommentDTO>().ReverseMap();
+			CreateMap<Favourite, FavouriteDTO>().ReverseMap();
 		}
 
     }

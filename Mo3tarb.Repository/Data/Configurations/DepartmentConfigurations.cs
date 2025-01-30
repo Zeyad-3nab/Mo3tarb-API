@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Mo3tarb.Repository.Data.Configurations
 {
-	public class DepartmentController: IEntityTypeConfiguration<Department>
+	public class DepartmentConfigurations: IEntityTypeConfiguration<Department>
 	{
 		public void Configure(EntityTypeBuilder<Department> builder)
 		{

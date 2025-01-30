@@ -7,7 +7,7 @@ namespace Mo3tarb.APIs.PL.Extensions
 {
     public static class CustomJWTAuthExtention
     {
-        public static void AddCustomJwtAuth(this IServiceCollection services, IConfiguration configuration)
+        public static void AddCustomJwtAuth(this IServiceCollection services, ConfigurationManager configuration)
         {
             services.AddAuthentication(o =>
             {
@@ -42,13 +42,13 @@ namespace Mo3tarb.APIs.PL.Extensions
                 O.SwaggerDoc("v1", new OpenApiInfo()
                 {
                     Version = "v1",
-                    Title = "Mo3tarib API",
+                    Title = "GYM API",
                     Description = "Output",
                     Contact = new OpenApiContact()
                     {
                         Name = "",
-                        Email = "mohammedatta095@gmail.com",
-                        Url = new Uri("https://wa.me/+201094108780")
+                        Email = "zeyadenab220@gmail.com",
+                        Url = new Uri("https://wa.me/+201012260782")
 
                     }
 
@@ -83,7 +83,6 @@ namespace Mo3tarb.APIs.PL.Extensions
 
                 });
             });
-
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Mo3tarb.Core.Entites;
+using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -25,5 +26,7 @@ namespace Mo3tarb.Repository.Data
         }
 
         public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<Favourite> Favourites { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 	}
 }

@@ -27,8 +27,9 @@ namespace Mo3tarb.Services
 			{
 				// Claim => User لل property هيا عباره عن شويه
 
+				new Claim(ClaimTypes.NameIdentifier , user.Id),
 				new Claim(ClaimTypes.GivenName , user.FirstName),
-				new Claim(ClaimTypes.Email , user.Email),
+				new Claim(ClaimTypes.Email , user.Email)
 			};
 
 			var userRoles = await userManager.GetRolesAsync(user);
@@ -40,12 +41,12 @@ namespace Mo3tarb.Services
 			}
 
 			// Key
-			var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
+			var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));
 
 			// Token
 			var Token = new JwtSecurityToken(
-				issuer: _config["JWT:ValidIssuer"],
-				audience: _config["JWT:ValidAudience"],
+				issuer: _config["JWT:Issuer"],
+				audience: _config["JWT:Audience"],
 				expires: DateTime.Now.AddDays(double.Parse(_config["JWT:DurationInDays"])),
 				claims: authClaim,
 				 signingCredentials: new SigningCredentials(authKey, SecurityAlgorithms.HmacSha256Signature)

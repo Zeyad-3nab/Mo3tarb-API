@@ -51,8 +51,11 @@ public class Program()
 		builder.Services.AddIdentityService(builder.Configuration); //identity
 
 
+        //Add Swagger Extention
+        builder.Services.AddSwaggerGenJwtAuth();
 
-     
+        //Add Custom Extention
+        builder.Services.AddCustomJwtAuth(builder.Configuration);
 
         #endregion
 
