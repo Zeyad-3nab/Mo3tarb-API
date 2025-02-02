@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Mo3tarb.Services\Mo3tarb.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Identity\Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -27,7 +27,7 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetUserFavorites(string userId)
+        public async Task<ActionResult<IEnumerable<Favourite>>> GetUserFavorites(string userId)
         {
             var favorites = await _FavouriteRepository.GetFavouritesByUserIdAsync(userId);
             return Ok(favorites);
@@ -69,7 +69,7 @@ namespace Mo3tarb.APIs.PL.Controllers
 
 
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<ActionResult> RemoveFromFavorites(string UserId, int ApartmentId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

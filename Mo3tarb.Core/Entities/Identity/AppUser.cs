@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Models;
 using System;
 using System.Collections.Generic;

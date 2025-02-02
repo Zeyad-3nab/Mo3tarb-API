@@ -45,10 +45,10 @@ namespace Mo3tarb.APIs.Controllers
         }
 
         [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<IEnumerable<RegisterDto>>> GetAllUsers() 
+        public async Task<ActionResult<IEnumerable<GetUserDTO>>> GetAllUsers() 
         {
             var users = await _userManager.Users.ToListAsync();
-            var map=_mapper.Map<IEnumerable<RegisterDto>>(users);
+            var map=_mapper.Map<IEnumerable<GetUserDTO>>(users);
             return Ok(map);
         }
 
@@ -187,7 +187,7 @@ namespace Mo3tarb.APIs.Controllers
                     }
                     return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest 
                         , "a bad Request , You have made" 
-                        , result.Errors.Select(ee=>ee.Description).ToList()));
+                        , result.Errors.Select(e=>e.Description).ToList()));
                 }
                 return NotFound(new ApiErrorResponse(404 , "User with this id is not found"));
             }

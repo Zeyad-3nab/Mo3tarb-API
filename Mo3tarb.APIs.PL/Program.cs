@@ -4,10 +4,10 @@ using Mo3tarb.Core.Models;
 using Mo3tarb.Repository.Data;
 using Mo3tarb.Repository.Repositories;
 using Mo3tarb.Extensions;
-using Talabat.API.Extensions;
 using Mo3tarb.APIs.Extensions;
 using Mo3tarb.Repository.Identity;
 using Mo3tarb.APIs.PL.Extensions;
+using Mo3tarb.Repository.RealTime;
 
 public class Program() 
 {
@@ -41,14 +41,13 @@ public class Program()
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));   //Scoped object ber request
         });
 
-		builder.Services.AddDbContext<AppIdentityDbContext>(Options =>
+		builder.Services.AddDbContext<ApplicationDbContext>(Options =>
 		{
 			Options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
 
 		});
 
         builder.Services.AddApplicationServices(builder.Configuration);
-		builder.Services.AddIdentityService(builder.Configuration); //identity
 
 
         //Add Swagger Extention
@@ -56,6 +55,7 @@ public class Program()
 
         //Add Custom Extention
         builder.Services.AddCustomJwtAuth(builder.Configuration);
+       
 
         #endregion
 
@@ -94,6 +94,7 @@ public class Program()
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<ChatHub>("/chatHub");
         #endregion
 
         app.Run();

@@ -10,9 +10,9 @@ namespace Mo3tarb.Repository.Repositories
 {
     public class DepartmentRepository : IDepartmentRepository
     {
-        private readonly AppIdentityDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DepartmentRepository(AppIdentityDbContext context)
+        public DepartmentRepository(ApplicationDbContext context)
         {
             _context = context;
         }

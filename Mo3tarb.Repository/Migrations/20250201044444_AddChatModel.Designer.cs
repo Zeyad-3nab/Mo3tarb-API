@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mo3tarb.Repository.Identity;
 
 #nullable disable
 
-namespace Mo3tarb.Repository.Identity.Migrations
+namespace Mo3tarb.Repository.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20250201044444_AddChatModel")]
+    partial class AddChatModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,6 +281,38 @@ namespace Mo3tarb.Repository.Identity.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Mo3tarb.Core.Entities.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("Mo3tarb.Core.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -307,7 +342,7 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Entities.Favourite", b =>
@@ -325,7 +360,7 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasIndex("apartmentId");
 
-                    b.ToTable("Favourite");
+                    b.ToTable("Favourites");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Models.Apartment", b =>
@@ -384,7 +419,7 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Apartment");
+                    b.ToTable("Apartments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -449,6 +484,25 @@ namespace Mo3tarb.Repository.Identity.Migrations
                         .HasForeignKey("DepartmentId1");
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Entities.Comment", b =>

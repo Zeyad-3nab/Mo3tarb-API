@@ -14,6 +14,7 @@ namespace GraduationProject.API.PL.Mapping
         public Applicationprofile(IConfiguration configuration)
         {
             CreateMap<RegisterDto, AppUser>().ReverseMap();
+            CreateMap<GetUserDTO, AppUser>().ReverseMap();
 
             //CreateMap<ApartmentDTO, Apartment>();
 
@@ -22,6 +23,7 @@ namespace GraduationProject.API.PL.Mapping
 			CreateMap<Department, DepartmentDTO>().ReverseMap();
 			CreateMap<Comment, CommentDTO>().ReverseMap();
 			CreateMap<Favourite, FavouriteDTO>().ReverseMap();
+			CreateMap<Rating, RatingDTO>().ReverseMap();
 		}
 
     }

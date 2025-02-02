@@ -11,6 +11,10 @@ using GraduationProject.API.PL.Mapping;
 using Mo3tarb.Core.Entites;
 using Mo3tarb.APIs.PL.Errors;
 using Mo3tarb.APIs.PL.Extensions;
+using Mo3tarb.Services;
+using Microsoft.AspNetCore.Identity;
+using Mo3tarb.Core.Entites.Identity;
+using Mo3tarb.Repository.Identity;
 
 namespace Mo3tarb.APIs.Extensions
 {
@@ -18,10 +22,15 @@ namespace Mo3tarb.APIs.Extensions
 	{
 		public static IServiceCollection AddApplicationServices(this IServiceCollection Services , IConfiguration configuration)
 		{
-			Services.AddScoped(typeof(IGenaricRepository<Apartment>), (typeof(ApartmentRepository)));
+            
+            Services.AddScoped<IApartmentRepository, ApartmentRepository>();
 			Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 			Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
 			Services.AddScoped<ICommentRepository, CommentRepository>();
+			Services.AddScoped<IChatRepository, ChatRepository>();
+			Services.AddScoped<IRatingRepository, RatingRepository>();
+
+            Services.AddScoped<ITokenService, TokenServices>();
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
            
 
@@ -49,6 +58,10 @@ namespace Mo3tarb.APIs.Extensions
 			});
 
             #endregion
+
+            Services.AddIdentity<AppUser, IdentityRole>()
+                            .AddEntityFrameworkStores<ApplicationDbContext>();
+            Services.AddSignalR();
 
             ////Add Swagger Extention
             //Services.AddSwaggerGenJwtAuth();

@@ -2,6 +2,7 @@
 using Mo3tarb.Core.Models;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Data;
+using Mo3tarb.Repository.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,8 @@ namespace Mo3tarb.Repository.Repositories
         }
         public async Task<int> AddAsync(Apartment entity)       //Add Apartment
         {
-           await _context.Apartments.AddAsync(entity);
-           return await _context.SaveChangesAsync();
+            await _context.Apartments.AddAsync(entity);
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<int> UpdateAsync(Apartment entity)    //Update Apartment
@@ -39,13 +40,13 @@ namespace Mo3tarb.Repository.Repositories
         public async Task<IEnumerable<Apartment>> GetAllAsync()
             => await _context.Apartments.ToListAsync();
 
-        public async Task<Apartment> GetByIdAsync(int Id) 
-            => await _context.Apartments.FirstOrDefaultAsync(a=>a.Id==Id);
-       
+        public async Task<Apartment> GetByIdAsync(int Id)
+            => await _context.Apartments.FirstOrDefaultAsync(a => a.Id == Id);
 
-        public async Task<IEnumerable<Apartment>> GetAllWithUserAsync(string Id) 
+
+        public async Task<IEnumerable<Apartment>> GetAllWithUserAsync(string Id)
             => await _context.Apartments.Where(e => e.UserId == Id).ToListAsync();
-        
+
 
         public async Task<IEnumerable<Apartment>> Search(string? temp, double? MinPrice, double? MaxPrice, double? Distance)
         {

@@ -3,58 +3,51 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Mo3tarb.Repository.Data.Migrations
+namespace Mo3tarb.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class AddComment : Migration
+    public partial class AddRating : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Comments",
+                name: "Ratings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ApartmentId = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Score = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.PrimaryKey("PK_Ratings", x => new { x.UserId, x.ApartmentId });
                     table.ForeignKey(
-                        name: "FK_Comments_Apartments_ApartmentId",
+                        name: "FK_Ratings_Apartments_ApartmentId",
                         column: x => x.ApartmentId,
                         principalTable: "Apartments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comments_AppUser_UserId",
+                        name: "FK_Ratings_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AppUser",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_ApartmentId",
-                table: "Comments",
+                name: "IX_Ratings_ApartmentId",
+                table: "Ratings",
                 column: "ApartmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "Ratings");
         }
     }
 }

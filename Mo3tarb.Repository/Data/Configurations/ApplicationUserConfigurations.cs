@@ -24,7 +24,7 @@ namespace GraduationProject.API.DAL.Data.Configurations
             builder.Property(p => p.FirstName).IsRequired();
             builder.Property(p => p.LastName).IsRequired();
             builder.Property(p => p.WhatsappNumber).IsRequired();
-            //builder.Property(p => p.WebsiteURL).IsRequired(false);
+            builder.Property(p => p.WebsiteURL).IsRequired(false);
             builder.Property(p => p.DepartmentId).IsRequired(false);
         }
     }

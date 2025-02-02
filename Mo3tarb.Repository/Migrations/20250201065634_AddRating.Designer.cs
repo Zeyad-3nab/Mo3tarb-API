@@ -9,11 +9,11 @@ using Mo3tarb.Repository.Identity;
 
 #nullable disable
 
-namespace Mo3tarb.Repository.Identity.Migrations
+namespace Mo3tarb.Repository.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20250127012637_Update app user2")]
-    partial class Updateappuser2
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20250201065634_AddRating")]
+    partial class AddRating
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,7 +172,7 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Department");
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Entites.Identity.AppUser", b =>
@@ -188,6 +188,9 @@ namespace Mo3tarb.Repository.Identity.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -213,7 +216,8 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.Property<string>("NationalId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -247,7 +251,6 @@ namespace Mo3tarb.Repository.Identity.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("WebsiteURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WhatsappNumber")
@@ -258,6 +261,15 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("DepartmentId1");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
+                    b.HasIndex("NationalId")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -267,6 +279,109 @@ namespace Mo3tarb.Repository.Identity.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApartmentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Favourite", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("apartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "apartmentId");
+
+                    b.HasIndex("apartmentId");
+
+                    b.ToTable("Favourites");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Rating", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ApartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ApartmentId");
+
+                    b.HasIndex("ApartmentId");
+
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Models.Apartment", b =>
@@ -286,7 +401,8 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("datetime2");
@@ -324,7 +440,7 @@ namespace Mo3tarb.Repository.Identity.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Apartment");
+                    b.ToTable("Apartments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -381,10 +497,90 @@ namespace Mo3tarb.Repository.Identity.Migrations
             modelBuilder.Entity("Mo3tarb.Core.Entites.Identity.AppUser", b =>
                 {
                     b.HasOne("Mo3tarb.Core.Entites.Department", "Department")
-                        .WithMany("ApplicationUsers")
+                        .WithMany()
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("Mo3tarb.Core.Entites.Department", null)
+                        .WithMany("ApplicationUsers")
+                        .HasForeignKey("DepartmentId1");
+
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Comment", b =>
+                {
+                    b.HasOne("Mo3tarb.Core.Models.Apartment", "Apartment")
+                        .WithMany()
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Apartment");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Favourite", b =>
+                {
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mo3tarb.Core.Models.Apartment", "apartment")
+                        .WithMany()
+                        .HasForeignKey("apartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("apartment");
+                });
+
+            modelBuilder.Entity("Mo3tarb.Core.Entities.Rating", b =>
+                {
+                    b.HasOne("Mo3tarb.Core.Models.Apartment", "Apartment")
+                        .WithMany()
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Apartment");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mo3tarb.Core.Models.Apartment", b =>
