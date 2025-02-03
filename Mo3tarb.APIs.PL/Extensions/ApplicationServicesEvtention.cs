@@ -22,54 +22,24 @@ namespace Mo3tarb.APIs.Extensions
 	{
 		public static IServiceCollection AddApplicationServices(this IServiceCollection Services , IConfiguration configuration)
 		{
-            
-            Services.AddScoped<IApartmentRepository, ApartmentRepository>();
-			Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-			Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
-			Services.AddScoped<ICommentRepository, CommentRepository>();
 			Services.AddScoped<IChatRepository, ChatRepository>();
-			Services.AddScoped<IRatingRepository, RatingRepository>();
-			Services.AddScoped<IReportRepository, ReportRepository>();
             Services.AddScoped<ITokenService, TokenServices>();
+            Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            //Services.AddScoped<IApartmentRepository, ApartmentRepository>();
+			//Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+			//Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+			//Services.AddScoped<ICommentRepository, CommentRepository>();
+			//Services.AddScoped<IRatingRepository, RatingRepository>();
+			//Services.AddScoped<IReportRepository, ReportRepository>();
 
 
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
-           
-
-            #region Error Handling
-            Services.Configure<ApiBehaviorOptions>(Options =>
-			{
-				//Options.InvalidModelStateResponseFactory = (actionContext) =>
-				//{
-				//	// ModelState => Dicsanary [KeyValuePair]
-				//	// Key => Name Of Param
-				//	// Value => Error
-				//	//ValidationError هنا بكريت شكل جديد من ال
-				//	// Note :Project بيتعمل مره واحده بس في ال ValidationError ال
-				//	var error = actionContext.ModelState.Where(P => P.Value.Errors.Count() > 0)
-				//										.SelectMany(P => P.Value.Errors)
-				//										.Select(E => E.ErrorMessage)
-				//										.ToArray();
-
-				//	var response = new ApiValidationResponse()
-				//	{
-				//		errors = error
-				//	};
-				//	return new BadRequestObjectResult(response);
-				//};
-			});
-
-            #endregion
 
             Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<ApplicationDbContext>();
             Services.AddSignalR();
 
-            ////Add Swagger Extention
-            //Services.AddSwaggerGenJwtAuth();
-
-            ////Add Custom Extention
-            //Services.AddCustomJwtAuth(configuration);
 
             return Services;
 

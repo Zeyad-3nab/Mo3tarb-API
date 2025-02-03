@@ -14,20 +14,20 @@ namespace Mo3tarb.APIs.PL.Controllers
     [Authorize]
     public class ReportController :APIBaseController
     {
-        private readonly IReportRepository _ReportRepository;
         private readonly UserManager<AppUser> _UserManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ReportController(IReportRepository reportRepository , UserManager<AppUser> userManager)
+        public ReportController(UserManager<AppUser> userManager , IUnitOfWork unitOfWork)
         {
-            _ReportRepository = reportRepository;
             _UserManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize(Roles ="Admin")]
         [HttpGet("GetAllReports")]
         public async Task<ActionResult<IEnumerable<Report>>> GetAllReports() 
         {
-            var result =  await _ReportRepository.GetAllReports();
+            var result =  await _unitOfWork.reportRepository.GetAllReports();
             return Ok(result);
         }
 
@@ -40,7 +40,7 @@ namespace Mo3tarb.APIs.PL.Controllers
             if (user is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
 
-            var result = await _ReportRepository.GetAllReportsWithUser(userId);
+            var result = await _unitOfWork.reportRepository.GetAllReportsWithUser(userId);
             return Ok(result);
         }
 
@@ -49,7 +49,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         public async Task<ActionResult<IEnumerable<Report>>> GetReportsOfUser() 
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _ReportRepository.GetAllReportsWithUser(userId);
+            var result = await _unitOfWork.reportRepository.GetAllReportsWithUser(userId);
             return Ok(result);
         }
 
@@ -63,7 +63,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                 Text = reportText,
                 UserId = userId
             };
-            var count = await _ReportRepository.AddReport(report);
+            var count = await _unitOfWork.reportRepository.AddReport(report);
             if (count > 0) 
                 return Ok();
             return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Report , please try again"));
@@ -75,11 +75,11 @@ namespace Mo3tarb.APIs.PL.Controllers
         [HttpDelete("RemoveReport")]
         public async Task<ActionResult> RemoveReport(int reportId)
         {
-            var report = await _ReportRepository.GetReportById(reportId);
+            var report = await _unitOfWork.reportRepository.GetReportById(reportId);
             if(report is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Report with this Id is not found"));
 
-            var count = await _ReportRepository.RemoveReport(report);
+            var count = await _unitOfWork.reportRepository.RemoveReport(report);
             if (count > 0)
                 return Ok();
             return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Remove Report , please try again"));

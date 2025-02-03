@@ -14,26 +14,25 @@ using System.Security.Claims;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
+    [Authorize]
     public class CommentController : APIBaseController
     {
         private readonly UserManager<AppUser> _UserManager;
-        private readonly ICommentRepository _CommentRepository;
         private readonly IMapper _Mapper;
-        private readonly SignInManager<AppUser> _SignInManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CommentController(UserManager<AppUser> userManager , ICommentRepository commentRepository  ,IMapper mapper , SignInManager<AppUser> signInManager)
+        public CommentController(UserManager<AppUser> userManager , IMapper mapper , IUnitOfWork unitOfWork)
         {
             _UserManager = userManager;
-            _CommentRepository = commentRepository;
             _Mapper = mapper;
-            _SignInManager = signInManager;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
         [HttpGet("GetAllCommentsOfApartment")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetAllCommentsOfApartment(int ApartmentId) 
         {
-            var comments =  await _CommentRepository.GetAllCommentsForApartmentAsync(ApartmentId);
+            var comments =  await _unitOfWork.commentRepository.GetAllCommentsForApartmentAsync(ApartmentId);
             return Ok(comments);
         }
 
@@ -42,7 +41,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         [HttpGet("{Id:int}")]
         public async Task<ActionResult<Comment>> GetCommentById(int Id)
         {
-            var comment = await _CommentRepository.GetByIdAsync(Id);
+            var comment = await _unitOfWork.commentRepository.GetByIdAsync(Id);
             if(comment is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment ith this Id is not found"));
 
@@ -58,7 +57,7 @@ namespace Mo3tarb.APIs.PL.Controllers
             {
                 var map = _Mapper.Map<Comment>(commentDTO);
                 map.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var count =  await _CommentRepository.AddCommentAsync(map);
+                var count =  await _unitOfWork.commentRepository.AddCommentAsync(map);
                 if (count > 0) 
                 {
                     return Ok(commentDTO);
@@ -77,7 +76,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var comment = await _CommentRepository.GetByIdAsync(CommentId);
+                var comment = await _unitOfWork.commentRepository.GetByIdAsync(CommentId);
                 if(comment is null)
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
@@ -86,7 +85,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                 {
                     comment.Text = text;
                     comment.CreatedAt= DateTime.Now;
-                    var count = await _CommentRepository.UpdateCommentAsync(comment);
+                    var count = await _unitOfWork.commentRepository.UpdateCommentAsync(comment);
                     if (count > 0)
                     {
                         return Ok(text);
@@ -107,14 +106,14 @@ namespace Mo3tarb.APIs.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var comment = await _CommentRepository.GetByIdAsync(CommentId);
+                var comment = await _unitOfWork.commentRepository.GetByIdAsync(CommentId);
                 if (comment is null)
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (comment.UserId == userId)
                 {
-                    var count = await _CommentRepository.DeleteCommentAsync(comment);
+                    var count = await _unitOfWork.commentRepository.DeleteCommentAsync(comment);
                     if (count > 0)
                     {
                         return Ok();

@@ -13,18 +13,18 @@ namespace Mo3tarb.APIs.Controllers;
 public class DepartmentController : APIBaseController
 {
 	private readonly IMapper _mapper;
-	private readonly IDepartmentRepository _departmentRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-	public DepartmentController(IDepartmentRepository departmentRepository, IMapper mapper)
+	public DepartmentController(IMapper mapper , IUnitOfWork unitOfWork)
 	{
 		_mapper = mapper;
-		_departmentRepository = departmentRepository;
+        _unitOfWork = unitOfWork;
 	}
 
 	[HttpGet]
 	public async Task<ActionResult> GetAll()
 	{
-		var departments = await _departmentRepository.GetAllAsync();
+		var departments = await _unitOfWork.departmentRepository.GetAllAsync();
 		var result = _mapper.Map<IReadOnlyList<DepartmentDTO>>(departments);
 		return Ok(result);
 	}
@@ -32,7 +32,7 @@ public class DepartmentController : APIBaseController
 	[HttpGet("{id:int}")]
 	public async Task<ActionResult> GetById(int id)
 	{
-		var department = await _departmentRepository.GetByIdAsync(id);
+		var department = await _unitOfWork.departmentRepository.GetByIdAsync(id);
 		if (department == null)
 			return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
 
@@ -47,7 +47,7 @@ public class DepartmentController : APIBaseController
 			return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
 		var department = _mapper.Map<Department>(departmentDto);
-		var count = await _departmentRepository.AddAsync(department);
+		var count = await _unitOfWork.departmentRepository.AddAsync(department);
 
 		if (count > 0)
 			return Ok(departmentDto);
@@ -62,7 +62,7 @@ public class DepartmentController : APIBaseController
 			return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
 		var department = _mapper.Map<Department>(departmentDto);
-		var count = await _departmentRepository.UpdateAsync(department);
+		var count = await _unitOfWork.departmentRepository.UpdateAsync(department);
 
 		if (count > 0)
 			return Ok(departmentDto);
@@ -73,11 +73,11 @@ public class DepartmentController : APIBaseController
 	[HttpDelete("{id:int}")]
 	public async Task<ActionResult> Delete(int id)
 	{
-		var department = await _departmentRepository.GetByIdAsync(id);
+		var department = await _unitOfWork.departmentRepository.GetByIdAsync(id);
 		if (department == null)
 			return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
 
-		var count = await _departmentRepository.DeleteAsync(department);
+		var count = await _unitOfWork.departmentRepository.DeleteAsync(department);
 		if (count > 0)
 			return Ok("Department deleted successfully.");
 

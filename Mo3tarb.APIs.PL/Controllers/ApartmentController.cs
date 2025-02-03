@@ -11,6 +11,7 @@ using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
@@ -18,20 +19,20 @@ namespace Mo3tarb.APIs.PL.Controllers
     {
         private readonly IMapper _Mapper;
         private readonly UserManager<AppUser> _UserManager;
-        private readonly IApartmentRepository _apartmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ApartmentController( IMapper mapper , UserManager<AppUser> userManager , IApartmentRepository apartmentRepository)
+        public ApartmentController( IMapper mapper , UserManager<AppUser> userManager , IUnitOfWork unitOfWork)
         {
             _Mapper = mapper;
             _UserManager = userManager;
-            _apartmentRepository = apartmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartments() 
         {
-            var Apartments = await _apartmentRepository.GetAllAsync();
+            var Apartments = await _unitOfWork.apartmentRepository.GetAllAsync();
                 return Ok(Apartments);
         }
 
@@ -39,13 +40,13 @@ namespace Mo3tarb.APIs.PL.Controllers
         [HttpGet("{Id}")]
         public async Task<ActionResult<Apartment>> GetApartmentById(int Id) 
         {
-            var Apartment= await _apartmentRepository.GetByIdAsync(Id);
+            var Apartment= await _unitOfWork.apartmentRepository.GetByIdAsync(Id);
 
             return Ok(Apartment);
         }
 
 
-        //[Authorize(Roles ="Semsar")]
+        [Authorize(Roles ="Semsar")]
         [HttpPost]
         public async Task<ActionResult> Add(ApartmentDTO apartmentDTO) 
         {
@@ -67,14 +68,14 @@ namespace Mo3tarb.APIs.PL.Controllers
                     apartment.BaseImageURL = DocumentSettings.Upload(apartmentDTO.BaseImage, "Images");   //add image of apartment in wwwroot
                 }
                 apartment.DistanceByMeters=CalcDistance.CalculateDistance(apartmentDTO.address_Lat,apartmentDTO.address_Lon);
-                apartment.UserId = "Test"; /*_UserManager.GetUserId(User);*/
+                apartment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 foreach (var item in apartmentDTO.Images) 
                 {
                     apartment.ImagesURL.Add(DocumentSettings.Upload(apartmentDTO.BaseImage, "Images"));
                 }
 
-                var count = await _apartmentRepository.AddAsync(apartment);
+                var count = await _unitOfWork.apartmentRepository.AddAsync(apartment);
                 if (count > 0) 
                 {
                     return Ok();
