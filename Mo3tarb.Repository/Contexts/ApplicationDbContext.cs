@@ -34,5 +34,6 @@ namespace Mo3tarb.Repository.Identity
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Report> Reports { get; set; }
     }
 }

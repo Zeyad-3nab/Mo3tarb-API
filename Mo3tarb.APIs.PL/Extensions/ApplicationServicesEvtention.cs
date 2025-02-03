@@ -29,8 +29,10 @@ namespace Mo3tarb.APIs.Extensions
 			Services.AddScoped<ICommentRepository, CommentRepository>();
 			Services.AddScoped<IChatRepository, ChatRepository>();
 			Services.AddScoped<IRatingRepository, RatingRepository>();
-
+			Services.AddScoped<IReportRepository, ReportRepository>();
             Services.AddScoped<ITokenService, TokenServices>();
+
+
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
            
 
