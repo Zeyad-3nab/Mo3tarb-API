@@ -12,6 +12,8 @@ using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Mo3tarb.API.DTOs.DepartmentDTOs;
+using Mo3tarb.Core.Entites;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
@@ -36,6 +38,23 @@ namespace Mo3tarb.APIs.PL.Controllers
                 return Ok(Apartments);
         }
 
+        [Authorize]
+        [HttpGet("GetApartmentForSignInUser")]
+        public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartmentWithUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var Apartments = await _unitOfWork.apartmentRepository.GetAllWithUserAsync(userId);
+            return Ok(Apartments);
+        }
+
+        [Authorize]
+        [HttpGet("GetApartmentForUser")]
+        public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartmentWithUser(string UserId)
+        {
+            var Apartments = await _unitOfWork.apartmentRepository.GetAllWithUserAsync(UserId);
+            return Ok(Apartments);
+        }
+
         [AllowAnonymous]
         [HttpGet("{Id}")]
         public async Task<ActionResult<Apartment>> GetApartmentById(int Id) 
@@ -46,7 +65,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         }
 
 
-        [Authorize(Roles ="Semsar")]
+        [Authorize(Roles ="Semsar,Admin")]
         [HttpPost]
         public async Task<ActionResult> Add(ApartmentDTO apartmentDTO) 
         {
@@ -68,6 +87,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                     apartment.BaseImageURL = DocumentSettings.Upload(apartmentDTO.BaseImage, "Images");   //add image of apartment in wwwroot
                 }
                 apartment.DistanceByMeters=CalcDistance.CalculateDistance(apartmentDTO.address_Lat,apartmentDTO.address_Lon);
+
                 apartment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 foreach (var item in apartmentDTO.Images) 
@@ -86,5 +106,81 @@ namespace Mo3tarb.APIs.PL.Controllers
                 , "a bad Request , You have made"
                 , ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
         }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> UpdateApartment(UpdateApartmentDTO apartmentDTO) 
+        {
+            if (ModelState.IsValid)
+            {
+                var apartment = await _unitOfWork.apartmentRepository.GetByIdAsync(apartmentDTO.Id);
+                if (apartment is null)
+                    return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Apartment with this Id is not found"));
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (apartment.UserId == userId || User.IsInRole("Admin"))
+                {
+
+                    if (apartmentDTO.BaseImage is not null) 
+                    {
+                        DocumentSettings.Delete(apartment.BaseImageURL, "Images");
+                        apartment.BaseImageURL = DocumentSettings.Upload(apartmentDTO.BaseImage, "Images");   //Save image && return name
+
+                    }
+                    if(apartmentDTO.Location != apartment.Location) 
+                       apartment.DistanceByMeters = CalcDistance.CalculateDistance(apartmentDTO.address_Lat, apartmentDTO.address_Lon);
+
+                    apartment.City = apartmentDTO.City;
+                    apartment.Village = apartmentDTO.Village;
+                    apartment.Location = apartmentDTO.Location;
+                    apartment.Price = apartmentDTO.Price;
+                    apartment.NumOfRooms = apartmentDTO.NumOfRooms;
+                    apartment.Type = apartmentDTO.Type;
+                    apartment.IsRent = apartmentDTO.IsRent;
+
+                    var count = await _unitOfWork.apartmentRepository.UpdateAsync(apartment);
+                    if (count > 0)
+                    {
+                        return Ok();
+                    }
+                    return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Apartment"));
+                }
+
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Don't have an access to update this apartment"));
+            }
+            return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+                , "a bad Request , You have made"
+                , ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> Delete(int id) 
+        {
+            var apartment = await _unitOfWork.apartmentRepository.GetByIdAsync(id);
+            if (apartment is null)
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Apartment with this Id is not found"));
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(apartment.UserId == userId || User.IsInRole("Admin"))
+            {
+                var count = await _unitOfWork.apartmentRepository.DeleteAsync(apartment);
+                if(count > 0) 
+                {
+                    DocumentSettings.Delete(apartment.BaseImageURL, "Images");
+                    foreach (var item in apartment.ImagesURL)
+                    {
+                        DocumentSettings.Delete(item, "Images");
+                    }
+
+                    return Ok();
+                }
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Comment"));
+            }
+            return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Don't have an access to remove this apartment"));
+
+        }
+
     }
 }

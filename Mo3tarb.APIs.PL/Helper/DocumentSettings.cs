@@ -28,8 +28,7 @@
         public static void Delete(string ImageName, string FolderName)
         {
             // Get Image Name from wwwroot
-            string FilePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\{FolderName}", $"{ImageName}");
-
+            string FilePath = Path.Combine($"{Directory.GetCurrentDirectory()}", $"wwwroot\\{FolderName}" , $"{ImageName}");
 
             if (File.Exists(FilePath))
                 File.Delete(FilePath);

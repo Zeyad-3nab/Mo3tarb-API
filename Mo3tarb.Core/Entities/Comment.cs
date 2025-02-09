@@ -12,6 +12,7 @@ namespace Mo3tarb.Core.Entities
 {
     public class Comment:BaseEntitiy
     {
+
         public string UserId { get; set; }
 
         public int ApartmentId { get; set; }

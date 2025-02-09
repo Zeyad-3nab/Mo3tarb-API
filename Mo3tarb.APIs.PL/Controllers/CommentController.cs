@@ -81,7 +81,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (comment.UserId == userId) 
+                if (comment.UserId == userId || User.IsInRole("Admin")) 
                 {
                     comment.Text = text;
                     comment.CreatedAt= DateTime.Now;
@@ -111,7 +111,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (comment.UserId == userId)
+                if (comment.UserId == userId|| User.IsInRole("Admin"))
                 {
                     var count = await _unitOfWork.commentRepository.DeleteCommentAsync(comment);
                     if (count > 0)

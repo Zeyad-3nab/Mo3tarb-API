@@ -25,8 +25,9 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Favourite>>> GetUserFavorites(string userId)
+        public async Task<ActionResult<IEnumerable<Favourite>>> GetUserFavorites()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var favorites = await _unitOfWork.favouriteRepository.GetFavouritesByUserIdAsync(userId);
             return Ok(favorites);
         }
@@ -68,21 +69,19 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpDelete]
-        public async Task<ActionResult> RemoveFromFavorites(string UserId, int ApartmentId)
+        public async Task<ActionResult> RemoveFromFavorites(int ApartmentId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == UserId)
-            {
-                var fav = await _unitOfWork.favouriteRepository.GetFavouritesAsync(UserId, ApartmentId);
+            var fav = await _unitOfWork.favouriteRepository.GetFavouritesAsync(userId , ApartmentId);
+            if (fav is null)
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "User don't have this Apartment in her favourite"));
+
                 var count = await _unitOfWork.favouriteRepository.DeleteFavouritesAsync(fav);
                 if (count > 0)
                 {
                     return Ok();
                 }
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest , "Error when remove favourite"));
-            }
-            return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest , "Don't have access to remove this comment"));
-
         }
     }
 }

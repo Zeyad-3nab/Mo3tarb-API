@@ -6,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Mo3tarb.Core.Entites.Identity;
+using Mo3tarb.Core.Models;
 
 namespace Mo3tarb.Core.Entities
 {
-    public class ChatMessage
+    public class ChatMessage:BaseEntitiy
     {
-        public int Id { get; set; }
-
         public string SenderId { get; set; }
 
         public string ReceiverId { get; set; }

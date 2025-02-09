@@ -42,14 +42,13 @@ namespace Mo3tarb.APIs.PL.Extensions
                 O.SwaggerDoc("v1", new OpenApiInfo()
                 {
                     Version = "v1",
-                    Title = "GYM API",
+                    Title = "Mo3tarib API",
                     Description = "Output",
                     Contact = new OpenApiContact()
                     {
                         Name = "",
-                        Email = "zeyadenab220@gmail.com",
-                        Url = new Uri("https://wa.me/+201012260782")
-
+                        Email = "Mohamedatta095@gmail.com",
+                        Url = new Uri("https://wa.me/+201094108780")
                     }
 
 

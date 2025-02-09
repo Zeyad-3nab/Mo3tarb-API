@@ -32,6 +32,7 @@ public class Program()
         // Add services to the container.
 
         #region Configure Service =>  Add services to the container.
+        builder.Services.AddSignalR();
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
