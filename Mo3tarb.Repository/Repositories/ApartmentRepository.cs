@@ -38,14 +38,14 @@ namespace Mo3tarb.Repository.Repositories
         }
 
         public async Task<IEnumerable<Apartment>> GetAllAsync()
-            => await _context.Apartments.ToListAsync();
+            => await _context.Apartments.Include(e => e.User).ToListAsync();
 
         public async Task<Apartment> GetByIdAsync(int Id)
             => await _context.Apartments.FirstOrDefaultAsync(a => a.Id == Id);
 
 
         public async Task<IEnumerable<Apartment>> GetAllWithUserAsync(string Id)
-            => await _context.Apartments.Where(e => e.UserId == Id).ToListAsync();
+            => await _context.Apartments.Include(e=>e.User).Where(e => e.UserId == Id).ToListAsync();
 
 
         public async Task<IEnumerable<Apartment>> Search(string? temp, double? MinPrice, double? MaxPrice, double? Distance)

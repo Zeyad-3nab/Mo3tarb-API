@@ -1,15 +1,12 @@
 ﻿using Mo3tarb.Core.Entites.Identity;
-using System;
-using System.Collections.Generic;
+using Mo3tarb.Core.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Mo3tarb.Core.Models
+namespace Mo3tarb.APIs.PL.DTOs
 {
-    public class Apartment:BaseEntitiy
+    public class ReturnApartmentDTO
     {
+        public int Id { get; set; }
         public string City { get; set; }
         public string? Village { get; set; }
         public string Location { get; set; }
@@ -20,11 +17,8 @@ namespace Mo3tarb.Core.Models
         public double DistanceByMeters { get; set; }
         public bool IsRent { get; set; }
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
-
-        [Required]
         public string UserId { get; set; }
-        public AppUser User { get; set; }
-
+        public string UserName { get; set; }
         public List<string>? ImagesURL { get; set; } = new List<string>();  //Images
     }
 }

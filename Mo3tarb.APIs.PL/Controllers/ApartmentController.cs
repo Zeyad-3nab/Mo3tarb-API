@@ -32,36 +32,40 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartments() 
+        public async Task<ActionResult<IEnumerable<ReturnApartmentDTO>>> GetAllApartments() 
         {
             var Apartments = await _unitOfWork.apartmentRepository.GetAllAsync();
-                return Ok(Apartments);
+            var map = _Mapper.Map<IEnumerable<ReturnApartmentDTO>>(Apartments);
+                return Ok(map);
         }
 
         [Authorize]
         [HttpGet("GetApartmentForSignInUser")]
-        public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartmentWithUser()
+        public async Task<ActionResult<IEnumerable<ReturnApartmentDTO>>> GetAllApartmentWithUser()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var Apartments = await _unitOfWork.apartmentRepository.GetAllWithUserAsync(userId);
-            return Ok(Apartments);
+            var map = _Mapper.Map<IEnumerable<ReturnApartmentDTO>>(Apartments);
+            return Ok(map);
         }
 
         [Authorize]
         [HttpGet("GetApartmentForUser")]
-        public async Task<ActionResult<IEnumerable<Apartment>>> GetAllApartmentWithUser(string UserId)
+        public async Task<ActionResult<IEnumerable<ReturnApartmentDTO>>> GetAllApartmentWithUser(string UserId)
         {
             var Apartments = await _unitOfWork.apartmentRepository.GetAllWithUserAsync(UserId);
-            return Ok(Apartments);
+            var map = _Mapper.Map<IEnumerable<ReturnApartmentDTO>>(Apartments);
+            return Ok(map);
         }
 
         [AllowAnonymous]
         [HttpGet("{Id}")]
-        public async Task<ActionResult<Apartment>> GetApartmentById(int Id) 
+        public async Task<ActionResult<ReturnApartmentDTO>> GetApartmentById(int Id) 
         {
             var Apartment= await _unitOfWork.apartmentRepository.GetByIdAsync(Id);
+            var map = _Mapper.Map<ReturnApartmentDTO>(Apartment);
 
-            return Ok(Apartment);
+            return Ok(map);
         }
 
 

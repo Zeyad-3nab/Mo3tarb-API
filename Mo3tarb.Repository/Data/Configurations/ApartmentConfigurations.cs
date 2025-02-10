@@ -17,9 +17,10 @@ namespace Mo3tarb.Repository.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(50);
 
-            //builder.HasOne(p => p.User)         //Relation With User
-            //    .WithMany()
-            //    .HasForeignKey(p => p.UserId);
+            builder.HasOne(p => p.User)         //Relation With User
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // ❌ منع الحذف التلقائي;
 
             builder.Property(p => p.Location).IsRequired();
 

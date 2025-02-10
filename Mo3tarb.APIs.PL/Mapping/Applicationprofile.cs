@@ -16,14 +16,12 @@ namespace GraduationProject.API.PL.Mapping
             CreateMap<RegisterDto, AppUser>().ReverseMap();
             CreateMap<GetUserDTO, AppUser>().ReverseMap();
 
-            //CreateMap<ApartmentDTO, Apartment>();
-
-            //CreateMap<Apartment, ApartmentDTO>();
-
 			CreateMap<Department, DepartmentDTO>().ReverseMap();
 			CreateMap<Comment, CommentDTO>().ReverseMap();
 			CreateMap<Favourite, FavouriteDTO>().ReverseMap();
-			CreateMap<Rating, RatingDTO>().ReverseMap();
+            CreateMap<Apartment, ReturnApartmentDTO>()
+           .ForMember(e=>e.UserName , opt => opt.MapFrom(src => src.User.UserName)); // Map UserName
+            CreateMap<Rating, RatingDTO>().ReverseMap();
 		}
 
     }
