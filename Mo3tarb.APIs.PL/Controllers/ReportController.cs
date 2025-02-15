@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
+using Mo3tarb.APIs.PL.DTOs;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
@@ -16,11 +18,13 @@ namespace Mo3tarb.APIs.PL.Controllers
     {
         private readonly UserManager<AppUser> _UserManager;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ReportController(UserManager<AppUser> userManager , IUnitOfWork unitOfWork)
+        public ReportController(UserManager<AppUser> userManager , IUnitOfWork unitOfWork , IMapper mapper)
         {
             _UserManager = userManager;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [Authorize(Roles ="Admin")]
@@ -34,23 +38,25 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize(Roles ="Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Report>>> GetReportsOfUser(string userId) 
+        public async Task<ActionResult<IEnumerable<ReturnReportDTO>>> GetReportsOfUser(string userId) 
         {
             var user = await _UserManager.FindByIdAsync(userId);
             if (user is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
 
             var result = await _unitOfWork.reportRepository.GetAllReportsWithUser(userId);
-            return Ok(result);
+            var map = _mapper.Map<IEnumerable<ReturnReportDTO>>(result);
+            return Ok(map);
         }
 
         [Authorize]
         [HttpGet("GetMyReports")]
-        public async Task<ActionResult<IEnumerable<Report>>> GetReportsOfUser() 
+        public async Task<ActionResult<IEnumerable<ReturnReportDTO>>> GetReportsOfUser() 
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _unitOfWork.reportRepository.GetAllReportsWithUser(userId);
-            return Ok(result);
+            var map = _mapper.Map<IEnumerable<ReturnReportDTO>>(result);
+            return Ok(map);
         }
 
         [Authorize]

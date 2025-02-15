@@ -25,11 +25,12 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Favourite>>> GetUserFavorites()
+        public async Task<ActionResult<IEnumerable<ReturnFavouriteDTO>>> GetUserFavorites()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var favorites = await _unitOfWork.favouriteRepository.GetFavouritesByUserIdAsync(userId);
-            return Ok(favorites);
+            var map = _Mapper.Map<IEnumerable<ReturnFavouriteDTO>>(favorites);
+            return Ok(map);
         }
 
 

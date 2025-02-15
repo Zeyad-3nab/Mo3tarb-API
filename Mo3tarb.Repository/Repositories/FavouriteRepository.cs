@@ -19,6 +19,7 @@ namespace Mo3tarb.Repository.Repositories
         {
             _Context = context;
         }
+
         public async Task<int> AddAsync(Favourite fav)
         {
             await _Context.Favourites.AddAsync(fav);
@@ -44,6 +45,7 @@ namespace Mo3tarb.Repository.Repositories
             return await _Context.Favourites
                              .Where(F => F.UserId == userId)
                              .Include(P => P.apartment)
+                             .Include(f=>f.User)
                              .ToListAsync();
 
         }

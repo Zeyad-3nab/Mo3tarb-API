@@ -98,9 +98,11 @@ namespace Mo3tarb.APIs.Controllers
                 var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                 if (!result.Succeeded) return Unauthorized(new ApiErrorResponse(401, "Password is InCorrect"));
 
+                var userRole = await _userManager.GetRolesAsync(user);
                 return Ok(new UserDto()
                 {
                     UserName = user.UserName,
+                    Role = userRole[0],
                     Email = user.Email,
                     Token = await _tokenServices.CreateTokenAsync(user, _userManager)
                 });

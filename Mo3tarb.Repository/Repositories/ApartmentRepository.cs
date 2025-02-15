@@ -41,7 +41,7 @@ namespace Mo3tarb.Repository.Repositories
             => await _context.Apartments.Include(e => e.User).ToListAsync();
 
         public async Task<Apartment> GetByIdAsync(int Id)
-            => await _context.Apartments.FirstOrDefaultAsync(a => a.Id == Id);
+            => await _context.Apartments.Include(e => e.User).FirstOrDefaultAsync(a => a.Id == Id);
 
 
         public async Task<IEnumerable<Apartment>> GetAllWithUserAsync(string Id)
@@ -50,22 +50,22 @@ namespace Mo3tarb.Repository.Repositories
 
         public async Task<IEnumerable<Apartment>> Search(string? temp, double? MinPrice, double? MaxPrice, double? Distance)
         {
-            var result = await _context.Apartments.ToListAsync();
+            var result = await _context.Apartments.Include(a=>a.User).ToListAsync();
 
             if (temp is not null)
             {
                 result = result.Where(e => e.City.Contains(temp) || e.Village.Contains(temp)).ToList();
             }
-            if (MinPrice != 0)
+            if (MinPrice > 0)
             {
                 result = result.Where(e => e.Price >= MinPrice).ToList();
             }
-            if (MaxPrice != 0)
+            if (MaxPrice > 0)
             {
                 result = result.Where(e => e.Price <= MaxPrice).ToList();
             }
 
-            if (Distance != 0)
+            if (Distance > 0)
             {
                 result = result.Where(e => e.DistanceByMeters <= Distance).ToList();
             }

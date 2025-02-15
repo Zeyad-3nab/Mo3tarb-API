@@ -58,6 +58,16 @@ namespace Mo3tarb.APIs.PL.Controllers
             return Ok(map);
         }
 
+
+        [AllowAnonymous]
+        [HttpGet("Search")]
+        public async Task<ActionResult<IEnumerable<ReturnApartmentDTO>>> SearchOfApartment(string? temp, double? MinPrice, double? MaxPrice, double? Distance)
+        {
+            var apartments = await _unitOfWork.apartmentRepository.Search(temp, MinPrice, MaxPrice, Distance);
+            var map = _Mapper.Map<IEnumerable<ReturnApartmentDTO>>(apartments);
+            return Ok(map);
+        }
+
         [AllowAnonymous]
         [HttpGet("{Id}")]
         public async Task<ActionResult<ReturnApartmentDTO>> GetApartmentById(int Id) 
@@ -96,7 +106,7 @@ namespace Mo3tarb.APIs.PL.Controllers
 
                 foreach (var item in apartmentDTO.Images) 
                 {
-                    apartment.ImagesURL.Add(DocumentSettings.Upload(apartmentDTO.BaseImage, "Images"));
+                    apartment.ImagesURL.Add(DocumentSettings.Upload(item , "Images"));
                 }
 
                 var count = await _unitOfWork.apartmentRepository.AddAsync(apartment);
@@ -186,5 +196,7 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         }
 
+
+       
     }
 }
