@@ -22,7 +22,7 @@ public class DepartmentController : APIBaseController
 	}
 
 	[HttpGet]
-	public async Task<ActionResult> GetAll()
+	public async Task<ActionResult<IEnumerable<DepartmentDTO>>> GetAll()
 	{
 		var departments = await _unitOfWork.departmentRepository.GetAllAsync();
 		var result = _mapper.Map<IReadOnlyList<DepartmentDTO>>(departments);
@@ -30,7 +30,7 @@ public class DepartmentController : APIBaseController
 	}
 
 	[HttpGet("{id:int}")]
-	public async Task<ActionResult> GetById(int id)
+	public async Task<ActionResult<DepartmentDTO>> GetById(int id)
 	{
 		var department = await _unitOfWork.departmentRepository.GetByIdAsync(id);
 		if (department == null)

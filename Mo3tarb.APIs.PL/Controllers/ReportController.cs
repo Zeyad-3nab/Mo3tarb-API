@@ -75,8 +75,6 @@ namespace Mo3tarb.APIs.PL.Controllers
             return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Report , please try again"));
         }
 
-
-
         [Authorize(Roles ="Admin")]
         [HttpDelete("RemoveReport")]
         public async Task<ActionResult> RemoveReport(int reportId)

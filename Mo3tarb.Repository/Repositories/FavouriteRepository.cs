@@ -35,8 +35,7 @@ namespace Mo3tarb.Repository.Repositories
         public async Task<Favourite> GetFavouritesAsync(string userId, int ApartmentId)
         {
             return await _Context.Favourites
-                            .Where(F => F.UserId == userId && F.apartmentId == ApartmentId)
-                            .FirstOrDefaultAsync();
+                            .FirstOrDefaultAsync(F => F.UserId == userId && F.apartmentId == ApartmentId);
 
         }
 

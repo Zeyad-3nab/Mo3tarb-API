@@ -15,6 +15,8 @@ namespace GraduationProject.API.PL.Mapping
         {
             CreateMap<RegisterDto, AppUser>().ReverseMap();
             CreateMap<GetUserDTO, AppUser>().ReverseMap();
+            CreateMap<AppUser , GetSanaieeDTO > ()
+                .ForMember(src=>src.DepartmentName , u=>u.MapFrom(s=>s.Department.Name));
 
 			CreateMap<Department, DepartmentDTO>().ReverseMap();
 			CreateMap<Comment, CommentDTO>().ReverseMap();

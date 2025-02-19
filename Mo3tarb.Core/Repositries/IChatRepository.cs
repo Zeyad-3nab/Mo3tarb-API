@@ -1,4 +1,5 @@
-﻿using Mo3tarb.Core.Entities;
+﻿using Mo3tarb.Core.Entites.Identity;
+using Mo3tarb.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace Mo3tarb.Core.Repositries
         Task<ChatMessage> GetMessageAsync(int MessageId);
         Task<int> SendMessageAsync(ChatMessage chatMessage);
         Task<int> DeleteAsync(ChatMessage chatMessage);
+        Task<IEnumerable<AppUser>> GetContactedUserAsync(string UserId);
     }
 }

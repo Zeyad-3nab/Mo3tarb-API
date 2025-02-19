@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Mo3tarb.Core.Entites;
+using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Identity;
@@ -44,5 +45,15 @@ namespace Mo3tarb.Repository.Repositories
 
         public async Task<ChatMessage> GetMessageAsync(int MessageId)
             => await _context.ChatMessages.FindAsync(MessageId);
+
+        public async Task<IEnumerable<AppUser>> GetContactedUserAsync(string UserId)
+        {
+            var contactedUser = await _context.ChatMessages
+                .Where(m=>m.SenderId == UserId || m.ReceiverId == UserId)
+                .Select(m=>m.SenderId==UserId ? m.Receiver : m.Sender)
+                .Distinct()
+                .ToListAsync();
+            return contactedUser;
+        }
     }
 }

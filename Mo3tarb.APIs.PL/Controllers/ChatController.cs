@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Identity;
@@ -21,11 +23,13 @@ namespace Mo3tarb.APIs.PL.Controllers
     {
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IChatRepository _ChatRepository;
+        private readonly IMapper _mapper;
 
-        public ChatController(IHubContext<ChatHub> hubContext , IChatRepository chatRepository)
+        public ChatController(IHubContext<ChatHub> hubContext , IChatRepository chatRepository , IMapper mapper)
         {
             _hubContext = hubContext;
             _ChatRepository = chatRepository;
+            _mapper = mapper;
         }
 
         // Send a message via HTTP API
@@ -57,6 +61,20 @@ namespace Mo3tarb.APIs.PL.Controllers
             }
             return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save message please try again"));
 
+        }
+
+        [Authorize]
+        [HttpGet("GetContactUsers")]
+        public async Task<ActionResult<IEnumerable<GetUserDTO>>> GetContactUsers()
+        {
+
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (UserId is null)
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Invalid to get Users please sure a sign in "));
+
+            var users = await _ChatRepository.GetContactedUserAsync(UserId);
+            var map = _mapper.Map<IEnumerable<GetUserDTO>>(users);
+            return Ok(map);
         }
 
         [Authorize]

@@ -35,8 +35,7 @@ namespace Mo3tarb.APIs.Controllers
         public AccountController(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenServices,
-            IMapper mapper
-            )
+            IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -52,6 +51,14 @@ namespace Mo3tarb.APIs.Controllers
             return Ok(map);
         }
 
+        [AllowAnonymous]
+        [HttpGet ("GetAllSanaieeia")]
+        public  async Task<ActionResult<IEnumerable<GetSanaieeDTO>>> GetAllSanaieeia() 
+        {
+            var users = await _userManager.Users.Where(u=>u.Type =="Sanaiee").Include(u=>u.Department).ToListAsync();
+            var map = _mapper.Map<IEnumerable<GetSanaieeDTO>>(users);
+            return Ok(map);
+        }
 
         [HttpGet("SearchByName")]
         public async Task<ActionResult<IEnumerable<RegisterDto>>> SearchByName(string Name)

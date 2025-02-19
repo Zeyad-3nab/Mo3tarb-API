@@ -25,7 +25,7 @@ namespace Mo3tarb.Repository.Repositories
         }
         public async Task<Rating> getByIdAsync(string UserId , int ApartmentId)
         {
-            return await _Context.Ratings.Where(r => r.UserId == UserId && r.ApartmentId == ApartmentId).FirstOrDefaultAsync();
+            return await _Context.Ratings.FirstOrDefaultAsync(r => r.UserId == UserId && r.ApartmentId == ApartmentId);
         }
 
         public async Task<int> AddRatingAsync(Rating rating)
