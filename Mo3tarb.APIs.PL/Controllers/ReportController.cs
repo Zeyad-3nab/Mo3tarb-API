@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
-using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.APIs.PL.DTOs.ReportDTO;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
@@ -51,7 +51,7 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet("GetMyReports")]
-        public async Task<ActionResult<IEnumerable<ReturnReportDTO>>> GetReportsOfUser() 
+        public async Task<ActionResult<IEnumerable<ReturnReportDTO>>> GetReportsOfSignInUser() 
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _unitOfWork.reportRepository.GetAllReportsWithUser(userId);

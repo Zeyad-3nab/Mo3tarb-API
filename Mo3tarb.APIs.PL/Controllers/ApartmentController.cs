@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Core.Models;
 using Mo3tarb.APIs.Controllers;
-using Mo3tarb.APIs.PL.DTOs;
 using AutoMapper;
 using Mo3tarb.APIs.PL.Helper;
 using Microsoft.AspNetCore.Identity;
@@ -12,8 +11,8 @@ using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.PL.Errors;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Mo3tarb.API.DTOs.DepartmentDTOs;
 using Mo3tarb.Core.Entites;
+using Mo3tarb.APIs.PL.DTOs.ApartmentDTO;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
@@ -53,6 +52,10 @@ namespace Mo3tarb.APIs.PL.Controllers
         [HttpGet("GetApartmentForUser")]
         public async Task<ActionResult<IEnumerable<ReturnApartmentDTO>>> GetAllApartmentWithUser(string UserId)
         {
+            var user = await _UserManager.FindByIdAsync(UserId);
+            if(user is null)
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Apartment With this Id is not found"));
+
             var Apartments = await _unitOfWork.apartmentRepository.GetAllWithUserAsync(UserId);
             var map = _Mapper.Map<IEnumerable<ReturnApartmentDTO>>(Apartments);
             return Ok(map);
@@ -86,7 +89,7 @@ namespace Mo3tarb.APIs.PL.Controllers
             if (ModelState.IsValid) 
             {
 
-                var apartment = new Apartment()   //    Can't use auto mapper because noa all data in apartment in apartmentDTO Like(Distance , Image)
+                var apartment = new Apartment()   //    Can't use auto mapper because not all data in apartment in apartmentDTO Like(Distance , Image , UserId)
                 {
                     City = apartmentDTO.City,
                     Village= apartmentDTO.Village,

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
-using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.APIs.PL.DTOs.FavouriteDTO;
 using Mo3tarb.APIs.PL.Errors;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
@@ -57,7 +57,6 @@ namespace Mo3tarb.APIs.PL.Controllers
                 var count = await _unitOfWork.favouriteRepository.AddAsync(map);
                 if (count > 0)
                 {
-
                     return Ok(favoriteDTO);
                 }
                 return BadRequest(new ApiErrorResponse(400, "Error in save favourite"));

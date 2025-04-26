@@ -23,9 +23,10 @@ public class Program()
             options.AddPolicy(name: MyAllowSpecificOrigins,
                               policy =>
                               {
-                                  policy.AllowAnyOrigin();
+                                  policy.WithOrigins("http://localhost:5225" , "https://mo8tareb-test-rx85.vercel.app", "http://localhost:5173" , "https://mo3tarib123.runasp.net");
                                   policy.AllowAnyMethod();
                                   policy.AllowAnyHeader();
+                                  policy.AllowCredentials();
                               });
         });
 

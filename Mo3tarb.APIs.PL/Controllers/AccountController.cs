@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Mo3tarb.APIs.DTOs;
 using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.Extensions;
 using Mo3tarb.Core.Entites.Identity;
@@ -18,10 +17,10 @@ using System.Net;
 using Mo3tarb.APIs.PL.Helper;
 using System.ComponentModel.DataAnnotations;
 using Mo3tarb.Core.Entites;
-using Mo3tarb.APIs.PL.DTOs;
 using Microsoft.VisualBasic;
 using Mo3tarb.APIs.PL.Errors;
 using Microsoft.EntityFrameworkCore;
+using Mo3tarb.APIs.PL.DTOs.AccountDTO;
 
 namespace Mo3tarb.APIs.Controllers
 {
@@ -61,17 +60,17 @@ namespace Mo3tarb.APIs.Controllers
         }
 
         [HttpGet("SearchByName")]
-        public async Task<ActionResult<IEnumerable<RegisterDto>>> SearchByName(string Name)
+        public async Task<ActionResult<IEnumerable<GetUserDTO>>> SearchByName(string Name)
         {
             var users = await _userManager.Users.Where(u=>u.NormalizedUserName.Contains(Name.ToUpper())).ToListAsync();
-            var map = _mapper.Map<IEnumerable<RegisterDto>>(users);
+            var map = _mapper.Map<IEnumerable<GetUserDTO>>(users);
             return Ok(map);
         }
 
 
         [AllowAnonymous]
         [HttpGet("GetUserById")]
-        public async Task<ActionResult<RegisterDto>> GetUserById(string userId)
+        public async Task<ActionResult<GetUserDTO>> GetUserById(string userId)
         {
             if (ModelState.IsValid)
             {
@@ -81,7 +80,7 @@ namespace Mo3tarb.APIs.Controllers
                     return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "User with this Id is not found"));
                 }
 
-                var map = _mapper.Map<RegisterDto>(user);
+                var map = _mapper.Map<GetUserDTO>(user);
                 return Ok(map);
                 
             }
@@ -108,6 +107,7 @@ namespace Mo3tarb.APIs.Controllers
                 var userRole = await _userManager.GetRolesAsync(user);
                 return Ok(new UserDto()
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     Role = userRole[0],
                     Email = user.Email,
@@ -147,7 +147,7 @@ namespace Mo3tarb.APIs.Controllers
 
                 var ReturnedUser = new UserDto()
                 {
-
+                    Id = user.Id,
                     UserName = user.UserName,
                     Email = user.Email,
                     Token = await _tokenServices.CreateTokenAsync(user, _userManager)

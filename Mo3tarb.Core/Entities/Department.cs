@@ -11,11 +11,8 @@ namespace Mo3tarb.Core.Entites
     {
         [Required]
         public string Name { get; set; }
-
-        //Location
         public List<AppUser> ApplicationUsers { get; set; } = new();
     }
 }
-
 
 

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
-using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.APIs.PL.DTOs.CommentDTO;
 using Mo3tarb.APIs.PL.Errors;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
@@ -43,7 +43,7 @@ namespace Mo3tarb.APIs.PL.Controllers
         {
             var comment = await _unitOfWork.commentRepository.GetByIdAsync(Id);
             if(comment is null)
-                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment ith this Id is not found"));
+                return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
             return Ok(comment);
         }

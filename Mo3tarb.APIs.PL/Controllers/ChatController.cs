@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
-using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.APIs.PL.DTOs.AccountDTO;
+using Mo3tarb.APIs.PL.DTOs.ChatMessagesDTO;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
@@ -17,8 +18,6 @@ using System.Security.Claims;
 
 namespace Mo3tarb.APIs.PL.Controllers
 {
-
-    [Authorize]
     public class ChatController:APIBaseController
     {
         private readonly IHubContext<ChatHub> _hubContext;
@@ -79,15 +78,16 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet("GetChat")]
-        public async Task<ActionResult<IEnumerable<ChatMessage>>> GetChatHistory(string receiverId)
+        public async Task<ActionResult<IEnumerable<ReturnChat>>> GetChatHistory(string receiverId)
         {
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if(senderId is null)
                 return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Invalid to get sender Id please sure a sign in "));
 
             var messages = await _ChatRepository.GetChatHistoryAsync(receiverId, senderId);
+            var map = _mapper.Map<IEnumerable<ReturnChat>>(messages);
 
-            return Ok(messages);
+            return Ok(map);
 
         }
 

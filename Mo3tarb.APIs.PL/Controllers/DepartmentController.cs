@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Mo3tarb.API.DTOs.DepartmentDTOs;
 using Mo3tarb.APIs.Errors;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.Core.Entites;
 using Mo3tarb.Core.Entites.Identity;
 using Mo3tarb.Core.Repositries;
+using Mo3tarb.APIs.PL.DTOs.DepartmentDTO;
 
 namespace Mo3tarb.APIs.Controllers;
 
@@ -33,7 +33,7 @@ public class DepartmentController : APIBaseController
 	public async Task<ActionResult<DepartmentDTO>> GetById(int id)
 	{
 		var department = await _unitOfWork.departmentRepository.GetByIdAsync(id);
-		if (department == null)
+		if (department is null)
 			return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
 
 		var result = _mapper.Map<DepartmentDTO>(department);
@@ -61,8 +61,12 @@ public class DepartmentController : APIBaseController
 		if (!ModelState.IsValid)
 			return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
-		var department = _mapper.Map<Department>(departmentDto);
-		var count = await _unitOfWork.departmentRepository.UpdateAsync(department);
+		var department = await _unitOfWork.departmentRepository.GetByIdAsync(departmentDto.Id);
+		if(department is null)
+            return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Department with this Id is not found"));
+
+        var map = _mapper.Map<Department>(departmentDto);
+		var count = await _unitOfWork.departmentRepository.UpdateAsync(map);
 
 		if (count > 0)
 			return Ok(departmentDto);
@@ -74,7 +78,7 @@ public class DepartmentController : APIBaseController
 	public async Task<ActionResult> Delete(int id)
 	{
 		var department = await _unitOfWork.departmentRepository.GetByIdAsync(id);
-		if (department == null)
+		if (department is null)
 			return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
 
 		var count = await _unitOfWork.departmentRepository.DeleteAsync(department);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mo3tarb.APIs.Controllers;
 using Mo3tarb.APIs.Errors;
-using Mo3tarb.APIs.PL.DTOs;
+using Mo3tarb.APIs.PL.DTOs.RatingDTO;
 using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
 using System.Security.Claims;

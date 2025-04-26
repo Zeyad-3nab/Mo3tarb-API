@@ -10,36 +10,25 @@ namespace Mo3tarb.Repository.RealTime
 {
     public class ChatHub:Hub
     {
-        private static ConcurrentDictionary<string, string> _connections = new ConcurrentDictionary<string, string>();
-        public override Task OnConnectedAsync() 
+        private static readonly ConcurrentDictionary<string, string> _userConnections = new();
+
+        // Method to send a message to a specific user
+        public async Task SendMessageToUser(string senderUserId, string receiverUserId, string message)
         {
-            string userId = Context.GetHttpContext().Request.Query["userId"];
-            if (!string.IsNullOrEmpty(userId))
+            if (_userConnections.TryGetValue(receiverUserId, out var connectionId))
             {
-                _connections[userId] = Context.ConnectionId;
-            }
-            return base.OnConnectedAsync();
-        }
-
-        public override Task OnDisconnectedAsync(Exception exception)
-        {
-            var user = _connections.FirstOrDefault(x => x.Value == Context.ConnectionId);
-            if (!string.IsNullOrEmpty(user.Key))
-            {
-                _connections.TryRemove(user.Key, out _);
-            }
-            return base.OnDisconnectedAsync(exception);
-        }
-
-
-
-        public async Task SendMessage(string senderId, string receiverId, string message)
-        {
-            if (_connections.TryGetValue(receiverId, out string receiverConnectionId))
-            {
-                await Clients.Client(receiverConnectionId).SendAsync("ReceiveMessage", senderId, message);
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", senderUserId, receiverUserId, message);
             }
         }
-
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            var userId = _userConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            if (userId != null)
+            {
+                _userConnections.TryRemove(userId, out _);
+                await Clients.All.SendAsync("UserDisconnected", userId);
+            }
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }
