@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mo3tarb.Repository.Identity;
 
@@ -11,9 +12,11 @@ using Mo3tarb.Repository.Identity;
 namespace Mo3tarb.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513213607_AddChatMessagesWithUser")]
+    partial class AddChatMessagesWithUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,6 +289,9 @@ namespace Mo3tarb.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -302,6 +308,8 @@ namespace Mo3tarb.Repository.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("ReceiverId");
 
@@ -531,16 +539,21 @@ namespace Mo3tarb.Repository.Migrations
 
             modelBuilder.Entity("Mo3tarb.Core.Entities.ChatMessage", b =>
                 {
+                    b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", null)
+                        .WithMany("ChatMessages")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Receiver");
@@ -623,7 +636,7 @@ namespace Mo3tarb.Repository.Migrations
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -637,6 +650,8 @@ namespace Mo3tarb.Repository.Migrations
             modelBuilder.Entity("Mo3tarb.Core.Entites.Identity.AppUser", b =>
                 {
                     b.Navigation("Apartments");
+
+                    b.Navigation("ChatMessages");
                 });
 #pragma warning restore 612, 618
         }

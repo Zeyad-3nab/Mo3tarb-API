@@ -14,5 +14,6 @@ namespace Mo3tarb.Core.Repositries
         public IFavouriteRepository favouriteRepository { get; }
         public IRatingRepository ratingRepository { get; }
         public IReportRepository reportRepository { get; }
+        public IChatRepository chatRepository { get; }
     }
 }

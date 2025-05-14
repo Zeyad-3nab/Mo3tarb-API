@@ -21,6 +21,7 @@ using Microsoft.VisualBasic;
 using Mo3tarb.APIs.PL.Errors;
 using Microsoft.EntityFrameworkCore;
 using Mo3tarb.APIs.PL.DTOs.AccountDTO;
+using Mo3tarb.Core.Repositries;
 
 namespace Mo3tarb.APIs.Controllers
 {
@@ -30,16 +31,19 @@ namespace Mo3tarb.APIs.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenServices;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AccountController(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenServices,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenServices = tokenServices;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("GetAllUsers")]
@@ -189,6 +193,13 @@ namespace Mo3tarb.APIs.Controllers
                 var user = await _userManager.FindByIdAsync(Id);
                 if (user is not null)
                 {
+                    await _unitOfWork.commentRepository.DeleteAll(Id);
+                    await _unitOfWork.favouriteRepository.DeleteAll(Id);
+                    await _unitOfWork.ratingRepository.DeleteAll(Id);
+                    await _unitOfWork.reportRepository.DeleteAll(Id);
+                    await _unitOfWork.apartmentRepository.DeleteAll(Id);
+                    //await _unitOfWork.Mess.DeleteAll(Id);
+
                     var result = await _userManager.DeleteAsync(user);
                     if (result.Succeeded)
                     {

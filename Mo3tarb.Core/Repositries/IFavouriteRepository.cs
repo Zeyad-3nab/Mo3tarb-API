@@ -13,5 +13,6 @@ namespace Mo3tarb.Core.Repositries
         Task<IReadOnlyList<Favourite>> GetFavouritesByUserIdAsync(string userId);
         Task<Favourite> GetFavouritesAsync(string userId, int ApartmentId);
         Task<int> DeleteFavouritesAsync(Favourite FavouriteId);
+        public Task<int> DeleteAll(string UserId);
     }
 }

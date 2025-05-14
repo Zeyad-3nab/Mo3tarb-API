@@ -13,5 +13,6 @@ namespace Mo3tarb.Core.Repositries
         public Task<IEnumerable<Apartment>> GetAllWithUserAsync(string Id);
 
         public Task<IEnumerable<Apartment>> Search(string? temp, double? MinPrice, double? MaxPrice, double? Distance);
+        public Task<int> DeleteAll(string UserId);
     }
 }

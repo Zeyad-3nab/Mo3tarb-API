@@ -39,5 +39,12 @@ namespace Mo3tarb.Repository.Repositories
             _Context.Ratings.Remove(rating);
             return await _Context.SaveChangesAsync();
         }
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var ratings = await _Context.Ratings.Where(e=>e.UserId==UserId).ToListAsync();
+            _Context.Ratings.RemoveRange(ratings);
+            return await _Context.SaveChangesAsync();
+        }
     }
 }

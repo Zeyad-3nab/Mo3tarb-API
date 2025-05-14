@@ -44,5 +44,12 @@ namespace Mo3tarb.Repository.Repositories
             _Context.Reports.Remove(report);
             return _Context.SaveChangesAsync();
         }
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var reports = await GetAllReportsWithUser(UserId);
+            _Context.Reports.RemoveRange(reports);
+            return await _Context.SaveChangesAsync();
+        }
     }
 }

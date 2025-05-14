@@ -13,5 +13,6 @@ namespace Mo3tarb.Core.Repositries
         Task<IReadOnlyList<Rating>> GetRatingsByApartmentIdAsync(int apartmentId);
         Task<int> DeleteRatingAsync(Rating rating);
         Task<Rating> getByIdAsync(string UserId, int ApartmentId);
+        public Task<int> DeleteAll(string UserId);
     }
 }

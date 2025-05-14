@@ -47,5 +47,13 @@ namespace Mo3tarb.Repository.Repositories
                              .ToListAsync();
 
         }
+
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var favourites = await GetFavouritesByUserIdAsync(UserId);
+            _Context.Favourites.RemoveRange(favourites);
+            return await _Context.SaveChangesAsync();
+        }
     }
 }

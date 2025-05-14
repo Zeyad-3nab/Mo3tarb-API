@@ -72,5 +72,12 @@ namespace Mo3tarb.Repository.Repositories
 
             return result;
         }
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var apartments = await GetAllWithUserAsync(UserId);
+            _context.Apartments.RemoveRange(apartments);
+            return await _context.SaveChangesAsync();
+        }
     }
 }

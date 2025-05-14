@@ -1,4 +1,5 @@
-﻿using Mo3tarb.Core.Repositries;
+﻿using Microsoft.AspNetCore.SignalR;
+using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Identity;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Mo3tarb.Repository.Repositories
         private IFavouriteRepository _favouriteRepository;
         private IRatingRepository _ratingRepository;
         private IReportRepository _reportRepository;
+        private IChatRepository _chatRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -27,6 +29,7 @@ namespace Mo3tarb.Repository.Repositories
             _favouriteRepository = new FavouriteRepository(_Context);
             _ratingRepository = new RatingRepository(_Context);
             _reportRepository = new ReportRepository(_Context);
+            //_chatRepository = new ChatRepository(_Context);
         }
 
         public IApartmentRepository apartmentRepository => _apartmentRepository;
@@ -40,5 +43,7 @@ namespace Mo3tarb.Repository.Repositories
         public IRatingRepository ratingRepository => _ratingRepository;
 
         public IReportRepository reportRepository => _reportRepository;
+
+        public IChatRepository chatRepository => _chatRepository;
     }
 }

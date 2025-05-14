@@ -23,7 +23,7 @@ public class Program()
             options.AddPolicy(name: MyAllowSpecificOrigins,
                               policy =>
                               {
-                                  policy.WithOrigins("http://localhost:5225" , "https://mo8tareb-test-rx85.vercel.app", "http://localhost:5173" , "https://mo3tarib123.runasp.net");
+                                  policy.WithOrigins("http://localhost:5225" , "https://mo8tareb-test-rx85.vercel.app" , "https://mo8tareb-test.vercel.app", "http://localhost:5173" , "https://mo3tarib123.runasp.net");
                                   policy.AllowAnyMethod();
                                   policy.AllowAnyHeader();
                                   policy.AllowCredentials();
@@ -46,7 +46,6 @@ public class Program()
 		builder.Services.AddDbContext<ApplicationDbContext>(Options =>
 		{
 			Options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
-
 		});
 
         builder.Services.AddApplicationServices(builder.Configuration);

@@ -10,7 +10,7 @@ namespace Mo3tarb.APIs.PL.Helper
         {
             var client = new SmtpClient("smtp.gmail.com", 587);
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("zeyadenab220@gmail.com", "ahkamixeuutjnbpg");
+            client.Credentials = new NetworkCredential("zeyadenab220@gmail.com", "gtnwsnmspsqcefdu");
             client.Send("zeyadenab220@gmail.com", email.To, email.Subject, email.Body);
         }
     }

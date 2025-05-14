@@ -15,5 +15,6 @@ namespace Mo3tarb.Core.Repositries
         Task<int> SendMessageAsync(ChatMessage chatMessage);
         Task<int> DeleteAsync(ChatMessage chatMessage);
         Task<IEnumerable<AppUser>> GetContactedUserAsync(string UserId);
+        public Task<int> DeleteAll(string UserId);
     }
 }

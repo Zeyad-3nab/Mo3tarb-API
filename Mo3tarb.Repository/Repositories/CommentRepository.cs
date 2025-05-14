@@ -14,33 +14,33 @@ namespace Mo3tarb.Repository.Repositories
 {
     public class CommentRepository : ICommentRepository
     {
-        private readonly ApplicationDbContext _Context;
+        private readonly ApplicationDbContext _context;
 
         public CommentRepository(ApplicationDbContext context)
         {
-            _Context = context;
+            _context = context;
         }
         public async Task<int> AddCommentAsync(Comment comment)
         {
-            await _Context.Comments.AddAsync(comment);
-            return await _Context.SaveChangesAsync();
+            await _context.Comments.AddAsync(comment);
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<int> UpdateCommentAsync(Comment comment)
         {
-            _Context.Comments.Update(comment);
-            return await _Context.SaveChangesAsync();
+            _context.Comments.Update(comment);
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<int> DeleteCommentAsync(Comment comment)
         {
-             _Context.Comments.Remove(comment);
-            return await _Context.SaveChangesAsync();
+             _context.Comments.Remove(comment);
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Comment>> GetAllCommentsForApartmentAsync(int apartmentId)
         {
-            return await _Context.Comments.Where(e=>e.ApartmentId == apartmentId)
+            return await _context.Comments.Where(e=>e.ApartmentId == apartmentId)
                 .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
@@ -48,7 +48,15 @@ namespace Mo3tarb.Repository.Repositories
 
         public async Task<Comment> GetByIdAsync(int id)
         {
-            return await _Context.Comments.Include(c => c.User).FirstOrDefaultAsync(a => a.Id == id);
+            return await _context.Comments.Include(c => c.User).FirstOrDefaultAsync(a => a.Id == id);
         }
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var comments = await _context.Comments.Where(e=>e.UserId == UserId).ToListAsync();
+            _context.Comments.RemoveRange(comments);
+            return await _context.SaveChangesAsync();
+        }
+
     }
 }

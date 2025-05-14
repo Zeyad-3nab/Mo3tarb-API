@@ -46,18 +46,11 @@ namespace Mo3tarb.Repository.Repositories
 
         public async Task<IEnumerable<AppUser>> GetContactedUserAsync(string userId)
         {
-            //var contactedUser = await _context.ChatMessages
-            //    .Where(m=>m.SenderId == UserId || m.ReceiverId == UserId)
-            //    .Select(m=>m.SenderId==UserId ? m.Receiver : m.Sender)
-            //    .Distinct()
-            //    .ToListAsync();
-            //return contactedUser;
-
             var userIds = await _context.ChatMessages
-       .Where(m => m.SenderId == userId || m.ReceiverId == userId)
-       .Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
-       .Distinct()
-       .ToListAsync();
+                          .Where(m => m.SenderId == userId || m.ReceiverId == userId)
+                          .Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+                          .Distinct()
+                          .ToListAsync();
 
             var contactedUsers = await _context.Users
                 .Where(u => userIds.Contains(u.Id))
@@ -65,6 +58,14 @@ namespace Mo3tarb.Repository.Repositories
                 .ToListAsync();
 
             return contactedUsers;
+        }
+
+
+        public async Task<int> DeleteAll(string UserId)
+        {
+            var ChatMessages = await _context.ChatMessages.Where(e=>e.SenderId == UserId ||e.ReceiverId ==UserId).ToListAsync();
+            _context.ChatMessages.RemoveRange(ChatMessages);
+            return await _context.SaveChangesAsync();
         }
     }
 }

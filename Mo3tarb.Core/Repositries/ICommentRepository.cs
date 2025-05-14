@@ -14,6 +14,7 @@ namespace Mo3tarb.Core.Repositries
         public Task<int> AddCommentAsync(Comment comment);
         public Task<int> UpdateCommentAsync(Comment comment);
         public Task<int> DeleteCommentAsync(Comment comment);
+        public Task<int> DeleteAll(string UserId);
 
     }
 }

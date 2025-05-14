@@ -14,5 +14,6 @@ namespace Mo3tarb.Core.Repositries
         Task<Report> GetReportById(int reportId);
         Task<int> AddReport(Report report);
         Task<int> RemoveReport(Report report);
+        public Task<int> DeleteAll(string UserId);
     }
 }

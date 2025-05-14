@@ -20,7 +20,7 @@ namespace Mo3tarb.Repository.Data.Configurations
             builder.HasOne(p => p.User)         //Relation With User
                 .WithMany()
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // ❌ منع الحذف التلقائي;
+                .OnDelete(DeleteBehavior.Cascade); // ❌ منع الحذف التلقائي;
 
             builder.Property(p => p.Location).IsRequired();
 
