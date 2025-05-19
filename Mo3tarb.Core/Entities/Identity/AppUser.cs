@@ -24,6 +24,5 @@ namespace Mo3tarb.Core.Entites.Identity
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
         public List<Apartment> Apartments { get; set; } = new();
-
     }
 }

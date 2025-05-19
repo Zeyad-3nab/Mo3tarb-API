@@ -5,15 +5,11 @@
 namespace Mo3tarb.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRestrict : Migration
+    public partial class AddMessageTypeAndMessageIsReadOrNot : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Apartments_AspNetUsers_UserId",
-                table: "Apartments");
-
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_AppUserId",
                 table: "ChatMessages");
@@ -46,13 +42,19 @@ namespace Mo3tarb.Repository.Migrations
                 name: "AppUserId1",
                 table: "ChatMessages");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Apartments_AspNetUsers_UserId",
-                table: "Apartments",
-                column: "UserId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddColumn<bool>(
+                name: "IsRead",
+                table: "ChatMessages",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<int>(
+                name: "MessageType",
+                table: "ChatMessages",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_ReceiverId",
@@ -60,7 +62,7 @@ namespace Mo3tarb.Repository.Migrations
                 column: "ReceiverId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_SenderId",
@@ -68,22 +70,26 @@ namespace Mo3tarb.Repository.Migrations
                 column: "SenderId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Apartments_AspNetUsers_UserId",
-                table: "Apartments");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_ReceiverId",
                 table: "ChatMessages");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_SenderId",
+                table: "ChatMessages");
+
+            migrationBuilder.DropColumn(
+                name: "IsRead",
+                table: "ChatMessages");
+
+            migrationBuilder.DropColumn(
+                name: "MessageType",
                 table: "ChatMessages");
 
             migrationBuilder.AddColumn<string>(
@@ -107,14 +113,6 @@ namespace Mo3tarb.Repository.Migrations
                 name: "IX_ChatMessages_AppUserId1",
                 table: "ChatMessages",
                 column: "AppUserId1");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Apartments_AspNetUsers_UserId",
-                table: "Apartments",
-                column: "UserId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ChatMessages_AspNetUsers_AppUserId",

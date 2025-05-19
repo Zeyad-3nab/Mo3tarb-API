@@ -198,7 +198,7 @@ namespace Mo3tarb.APIs.Controllers
                     await _unitOfWork.ratingRepository.DeleteAll(Id);
                     await _unitOfWork.reportRepository.DeleteAll(Id);
                     await _unitOfWork.apartmentRepository.DeleteAll(Id);
-                    //await _unitOfWork.Mess.DeleteAll(Id);
+                    await _unitOfWork.chatRepository.DeleteAll(Id);
 
                     var result = await _userManager.DeleteAsync(user);
                     if (result.Succeeded)

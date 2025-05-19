@@ -6,12 +6,6 @@ using Mo3tarb.Core.Entities;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Identity;
 using Mo3tarb.Repository.RealTime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mo3tarb.Repository.Repositories
 {
@@ -44,27 +38,56 @@ namespace Mo3tarb.Repository.Repositories
         public async Task<ChatMessage> GetMessageAsync(int MessageId)
             => await _context.ChatMessages.FindAsync(MessageId);
 
-        public async Task<IEnumerable<AppUser>> GetContactedUserAsync(string userId)
+        public async Task<int> GetUnreadMessagesCountAsync(string receiverId)
+        {
+            return await _context.ChatMessages
+                .Where(m => m.ReceiverId == receiverId && !m.IsRead)
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<(AppUser User, int UnreadCount)>> GetContactedUsersWithUnreadCountAsync(string userId)
         {
             var userIds = await _context.ChatMessages
-                          .Where(m => m.SenderId == userId || m.ReceiverId == userId)
-                          .Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
-                          .Distinct()
-                          .ToListAsync();
+                .Where(m => m.SenderId == userId || m.ReceiverId == userId)
+                .Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+                .Distinct()
+                .ToListAsync();
 
-            var contactedUsers = await _context.Users
+            var unreadCounts = await _context.ChatMessages
+                .Where(m => m.ReceiverId == userId && !m.IsRead)
+                .GroupBy(m => m.SenderId)
+                .Select(g => new { SenderId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(g => g.SenderId, g => g.Count);
+
+            var users = await _context.Users
                 .Where(u => userIds.Contains(u.Id))
                 .AsNoTracking()
                 .ToListAsync();
 
-            return contactedUsers;
-        }
+            var result = users.Select(u => (
+                User: u,
+                UnreadCount: unreadCounts.ContainsKey(u.Id) ? unreadCounts[u.Id] : 0
+            ));
 
+            return result;
+        }
 
         public async Task<int> DeleteAll(string UserId)
         {
             var ChatMessages = await _context.ChatMessages.Where(e=>e.SenderId == UserId ||e.ReceiverId ==UserId).ToListAsync();
             _context.ChatMessages.RemoveRange(ChatMessages);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> MarkMessagesAsReadAsync(string senderId, string receiverId)
+        {
+            var messages = await _context.ChatMessages
+                .Where(m => m.ReceiverId == senderId && !m.IsRead)
+                .ToListAsync();
+
+            foreach (var msg in messages)
+                msg.IsRead = true;
+
             return await _context.SaveChangesAsync();
         }
     }

@@ -18,6 +18,8 @@ namespace Mo3tarb.Core.Entities
 
         public string Message { get; set; }
 
+        public bool IsRead { get; set; } = false;
+        public MessageType MessageType { get; set; } = MessageType.Text;
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public AppUser Sender { get; set; }
 

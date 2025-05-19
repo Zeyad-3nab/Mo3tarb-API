@@ -13,8 +13,10 @@ namespace Mo3tarb.Core.Repositries
         Task<List<ChatMessage>> GetChatHistoryAsync(string receiverId, string senderId);
         Task<ChatMessage> GetMessageAsync(int MessageId);
         Task<int> SendMessageAsync(ChatMessage chatMessage);
+        Task<int> GetUnreadMessagesCountAsync(string receiverId);
         Task<int> DeleteAsync(ChatMessage chatMessage);
-        Task<IEnumerable<AppUser>> GetContactedUserAsync(string UserId);
+        Task<IEnumerable<(AppUser User, int UnreadCount)>> GetContactedUsersWithUnreadCountAsync(string userId);
         public Task<int> DeleteAll(string UserId);
+        Task<int> MarkMessagesAsReadAsync(string senderId, string receiverId);
     }
 }

@@ -12,8 +12,8 @@ using Mo3tarb.Repository.Identity;
 namespace Mo3tarb.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250514035756_AddRestrict")]
-    partial class AddRestrict
+    [Migration("20250519022903_AddLongitudinalAndLatidunialToAppartment")]
+    partial class AddLongitudinalAndLatidunialToAppartment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -289,9 +289,15 @@ namespace Mo3tarb.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
 
                     b.Property<string>("ReceiverId")
                         .IsRequired()
@@ -459,6 +465,12 @@ namespace Mo3tarb.Repository.Migrations
                     b.Property<string>("Village")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("address_Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("address_Lon")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
@@ -537,13 +549,13 @@ namespace Mo3tarb.Repository.Migrations
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Receiver");
@@ -626,7 +638,7 @@ namespace Mo3tarb.Repository.Migrations
                     b.HasOne("Mo3tarb.Core.Entites.Identity.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");

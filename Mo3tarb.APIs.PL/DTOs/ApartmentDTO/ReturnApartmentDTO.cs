@@ -10,6 +10,8 @@ namespace Mo3tarb.APIs.PL.DTOs.ApartmentDTO
         public string City { get; set; }
         public string? Village { get; set; }
         public string Location { get; set; }
+        public double address_Lat { get; set; }
+        public double address_Lon { get; set; }
         public int Price { get; set; }
         public int NumOfRooms { get; set; }
         public string BaseImageURL { get; set; }

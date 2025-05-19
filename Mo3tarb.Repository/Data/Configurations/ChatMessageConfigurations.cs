@@ -16,12 +16,12 @@ namespace Mo3tarb.Repository.Data.Configurations
             builder.HasOne(e => e.Receiver)
                .WithMany()
                .HasForeignKey(e => e.ReceiverId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(e => e.Sender)
               .WithMany()
               .HasForeignKey(e => e.SenderId)
-              .OnDelete(DeleteBehavior.Cascade);
+              .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(e=>e.SenderId).IsRequired();
             builder.Property(e=>e.ReceiverId).IsRequired();

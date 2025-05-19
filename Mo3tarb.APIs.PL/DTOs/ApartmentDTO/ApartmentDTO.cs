@@ -31,7 +31,6 @@ namespace Mo3tarb.APIs.PL.DTOs.ApartmentDTO
         public int NumOfRooms { get; set; }
 
 
-
         [Required(ErrorMessage = "Type is required")]
         public ApartmentType Type { get; set; }
 
@@ -40,11 +39,8 @@ namespace Mo3tarb.APIs.PL.DTOs.ApartmentDTO
         [Required(ErrorMessage = "address lat is required")]
         public double address_Lat { get; set; }
 
-
-
         [Required(ErrorMessage = "address lon is required")]
         public double address_Lon { get; set; }
-
 
 
         [Required(ErrorMessage = "IsRent or not IsRequired")]

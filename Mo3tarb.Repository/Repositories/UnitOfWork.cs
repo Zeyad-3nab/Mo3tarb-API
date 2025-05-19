@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Mo3tarb.Core.Repositries;
 using Mo3tarb.Repository.Identity;
+using Mo3tarb.Repository.RealTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Mo3tarb.Repository.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _Context;
+        private readonly IHubContext<ChatHub> _hubContext;
         private IApartmentRepository _apartmentRepository;
         private ICommentRepository _commentRepository;
         private IDepartmentRepository _departmentRepository;
@@ -20,16 +22,17 @@ namespace Mo3tarb.Repository.Repositories
         private IReportRepository _reportRepository;
         private IChatRepository _chatRepository;
 
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context , IHubContext<ChatHub> hubContext)
         {
             _Context = context;
+            _hubContext = hubContext;
             _apartmentRepository = new ApartmentRepository(_Context);
             _commentRepository = new CommentRepository(_Context);
             _departmentRepository = new DepartmentRepository(_Context);
             _favouriteRepository = new FavouriteRepository(_Context);
             _ratingRepository = new RatingRepository(_Context);
             _reportRepository = new ReportRepository(_Context);
-            //_chatRepository = new ChatRepository(_Context);
+            _chatRepository = new ChatRepository(_Context , _hubContext);
         }
 
         public IApartmentRepository apartmentRepository => _apartmentRepository;

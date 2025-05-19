@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mo3tarb.Repository.Identity;
 
@@ -11,9 +12,11 @@ using Mo3tarb.Repository.Identity;
 namespace Mo3tarb.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515024630_AddMessageTypeAndMessageIsReadOrNot")]
+    partial class AddMessageTypeAndMessageIsReadOrNot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -461,12 +464,6 @@ namespace Mo3tarb.Repository.Migrations
 
                     b.Property<string>("Village")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("address_Lat")
-                        .HasColumnType("float");
-
-                    b.Property<double>("address_Lon")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

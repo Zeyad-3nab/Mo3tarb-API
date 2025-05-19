@@ -33,5 +33,28 @@
             if (File.Exists(FilePath))
                 File.Delete(FilePath);
         }
+
+
+        public static string UploadChatImage(IFormFile file, string FolderName)
+        {
+            //string FolderPath=Path.Combine(Directory.GetCurrentDirectory(), )
+
+            //1- Get Folder Name in wwwroot
+            string FolderPath = Path.Combine($"{Directory.GetCurrentDirectory()}", $"wwwroot\\{FolderName}");
+
+            // set folder name as a unique using guid
+            string FileName = $"{file.FileName}";
+
+            // Get File Path FolderPath + FolderName
+            string FilePath = Path.Combine(FolderPath, FileName);
+
+            //FileStream because copy to take file stream
+            using var FileStream = new FileStream(FilePath, FileMode.Create);
+
+            //set image in wwwroot
+            file.CopyTo(FileStream);
+
+            return FileName;
+        }
     }
 }
