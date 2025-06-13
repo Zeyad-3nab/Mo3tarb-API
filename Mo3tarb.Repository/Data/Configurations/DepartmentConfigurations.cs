@@ -14,10 +14,6 @@ namespace Mo3tarb.Repository.Data.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Department> builder)
 		{
-     //    builder.HasMany(d => d.ApplicationUsers)
-					//.WithOne(u => u.Department)
-					//.HasForeignKey(u => u.DepartmentId);
-
 		}
 	}
 }

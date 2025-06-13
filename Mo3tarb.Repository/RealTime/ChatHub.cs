@@ -10,54 +10,28 @@ using System.Threading.Tasks;
 
 namespace Mo3tarb.Repository.RealTime
 {
-    public class ChatHub:Hub
+    public class ChatHub : Hub
     {
-        // Dictionary to track connected users by userId
-        private static readonly ConcurrentDictionary<string, string> UserConnections = new();
+        private static readonly ConcurrentDictionary<string, string> _userConnections = new();
 
-        public async Task RegisterUser(string userId)
+        // Method to send a message to a specific user
+        public async Task SendMessageToUser(string senderUserId, string receiverUserId, string message)
         {
-            UserConnections[userId] = Context.ConnectionId;
-            await Clients.All.SendAsync("userconnected");
-        }
-
-        public async Task SendMessageToUser(string senderId, string receiverId, string message)
-        {
-            if (UserConnections.TryGetValue(receiverId, out var receiverConnectionId))
+            if (_userConnections.TryGetValue(receiverUserId, out var connectionId))
             {
-                await Clients.Client(receiverConnectionId).SendAsync("ReceiveMessage", senderId, receiverId, message, 0);
-            }
-
-            // Also send the message back to the sender in case of UI confirmation
-            if (UserConnections.TryGetValue(senderId, out var senderConnectionId))
-            {
-                await Clients.Client(senderConnectionId).SendAsync("ReceiveMessage", senderId, receiverId, message, 0);
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", senderUserId, receiverUserId, message);
             }
         }
-
-        public async Task MessageDeleted(string messageId, string receiverId)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            if (UserConnections.TryGetValue(receiverId, out var receiverConnectionId))
+            var userId = _userConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            if (userId != null)
             {
-                await Clients.Client(receiverConnectionId).SendAsync("MessageDeleted", messageId, receiverId);
+                _userConnections.TryRemove(userId, out _);
+                await Clients.All.SendAsync("UserDisconnected", userId);
             }
-
-            // Optional: Notify the sender too
-            var senderConnectionId = Context.ConnectionId;
-            await Clients.Client(senderConnectionId).SendAsync("MessageDeleted", messageId, receiverId);
-        }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            var userId = UserConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
-            if (!string.IsNullOrEmpty(userId))
-            {
-                UserConnections.TryRemove(userId, out _);
-            }
-
             await base.OnDisconnectedAsync(exception);
         }
-
     }
 }
 

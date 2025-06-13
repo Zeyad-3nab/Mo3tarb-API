@@ -86,42 +86,45 @@ namespace Mo3tarb.APIs.PL.Controllers
         [HttpPost]
         public async Task<ActionResult> Add(ApartmentDTO apartmentDTO) 
         {
-            if (ModelState.IsValid) 
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
+               , "a bad Request , You have made"
+               , ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+
+
+            var apartment = new Apartment()   //    Can't use auto mapper because not all data in apartment in apartmentDTO Like(Distance , Image , UserId)
             {
-
-                var apartment = new Apartment()   //    Can't use auto mapper because not all data in apartment in apartmentDTO Like(Distance , Image , UserId)
-                {
-                    City = apartmentDTO.City,
-                    Village= apartmentDTO.Village,
-                    Location= apartmentDTO.Location,
-                    Price= apartmentDTO.Price,
-                    NumOfRooms= apartmentDTO.NumOfRooms,
-                    Type=apartmentDTO.Type,
-                    IsRent= apartmentDTO.IsRent
-                };
-                if (apartmentDTO.BaseImage is not null)
-                {
-                    apartment.BaseImageURL = DocumentSettings.Upload(apartmentDTO.BaseImage, "Images");   //add image of apartment in wwwroot
-                }
-                apartment.DistanceByMeters=CalcDistance.CalculateDistance(apartmentDTO.address_Lat,apartmentDTO.address_Lon);
-
-                apartment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                foreach (var item in apartmentDTO.Images) 
-                {
-                    apartment.ImagesURL.Add(DocumentSettings.Upload(item , "Images"));
-                }
-
-                var count = await _unitOfWork.apartmentRepository.AddAsync(apartment);
-                if (count > 0) 
-                {
-                    return Ok();
-                }
-                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Apartment"));
+                City = apartmentDTO.City,
+                Village= apartmentDTO.Village,
+                Location= apartmentDTO.Location,
+                Price= apartmentDTO.Price,
+                NumOfRooms= apartmentDTO.NumOfRooms,
+                Type=apartmentDTO.Type,
+                IsRent= apartmentDTO.IsRent,
+                address_Lon = apartmentDTO.address_Lon,
+                address_Lat = apartmentDTO.address_Lat
+            };
+            if (apartmentDTO.BaseImage is not null)
+            {
+                apartment.BaseImageURL = DocumentSettings.Upload(apartmentDTO.BaseImage, "Images");   //add image of apartment in wwwroot
             }
-            return BadRequest(new ApiValidationResponse(StatusCodes.Status400BadRequest
-                , "a bad Request , You have made"
-                , ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
+            apartment.DistanceByMeters=CalcDistance.CalculateDistance(apartmentDTO.address_Lat,apartmentDTO.address_Lon);
+
+            apartment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            foreach (var item in apartmentDTO.Images) 
+            {
+                apartment.ImagesURL.Add(DocumentSettings.Upload(item , "Images"));
+            }
+
+            var count = await _unitOfWork.apartmentRepository.AddAsync(apartment);
+            if (count > 0) 
+            {
+                return Ok();
+            }
+            return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in Save Apartment"));
+       
+           
         }
 
         [Authorize]

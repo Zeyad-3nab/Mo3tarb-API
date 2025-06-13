@@ -153,6 +153,7 @@ namespace Mo3tarb.APIs.Controllers
                 {
                     Id = user.Id,
                     UserName = user.UserName,
+                    Role = user.Type,
                     Email = user.Email,
                     Token = await _tokenServices.CreateTokenAsync(user, _userManager)
                 };
@@ -167,7 +168,7 @@ namespace Mo3tarb.APIs.Controllers
         }
 
         // GetCurrentUser
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme/*"Bearer"*/)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme/*"Bearer"*/)]
         [HttpGet("GetCurrentUser")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {

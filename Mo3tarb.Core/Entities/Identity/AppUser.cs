@@ -14,9 +14,6 @@ namespace Mo3tarb.Core.Entites.Identity
 	{
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        //public string? PhotoURL { get; set; }
-
         public string WhatsappNumber { get; set; }
         public string? WebsiteURL { get; set; }
         public string NationalId { get; set; }

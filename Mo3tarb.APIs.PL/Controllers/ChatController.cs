@@ -59,7 +59,7 @@ namespace Mo3tarb.APIs.PL.Controllers
             {
                 // Send message via SignalR if receiver is online
                 await _hubContext.Clients.User(request.ReceiverId)
-                    .SendAsync("ReceiveMessage", senderId, request.Message);
+                    .SendAsync("ReceiveMessage", senderId,request.ReceiverId, request.Message);
                 return Ok();
             }
             return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest, "Error in save message please try again"));

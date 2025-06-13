@@ -13,14 +13,13 @@ namespace Mo3tarb.Repository.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Apartment> builder)  //builder as a apartment
         {
-            builder.Property(p => p.City)
-                .IsRequired()
-                .HasMaxLength(50);
+            builder.Property(p => p.City).IsRequired().HasMaxLength(50);
 
             builder.HasOne(p => p.User)         //Relation With User
                 .WithMany()
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict); // ❌ منع الحذف التلقائي;
+
 
             builder.Property(p => p.Location).IsRequired();
 

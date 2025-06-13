@@ -35,7 +35,6 @@ namespace Mo3tarb.APIs.PL.Controllers
             return Ok(result);
         }
 
-
         [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReturnReportDTO>>> GetReportsOfUser(string userId) 

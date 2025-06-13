@@ -36,8 +36,17 @@ namespace Mo3tarb.APIs.Extensions
 
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
 
-            Services.AddIdentity<AppUser, IdentityRole>()
-                            .AddEntityFrameworkStores<ApplicationDbContext>();
+            Services.AddIdentity<AppUser, IdentityRole>
+            (options=>
+            {
+            	options.Password.RequireDigit = true;
+            	options.Password.RequireLowercase = true;
+            	options.Password.RequireUppercase = false;
+            	options.Password.RequireNonAlphanumeric = false;
+            	options.Password.RequiredLength = 6;
+            	options.Password.RequiredUniqueChars = 0;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
             Services.AddSignalR();
 
 
