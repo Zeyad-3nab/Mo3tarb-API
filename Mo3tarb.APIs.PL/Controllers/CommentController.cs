@@ -30,22 +30,25 @@ namespace Mo3tarb.APIs.PL.Controllers
 
         [Authorize]
         [HttpGet("GetAllCommentsOfApartment")]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetAllCommentsOfApartment(int ApartmentId) 
+        public async Task<ActionResult<IEnumerable<ReturnCommentDTO>>> GetAllCommentsOfApartment(int ApartmentId) 
         {
             var comments =  await _unitOfWork.commentRepository.GetAllCommentsForApartmentAsync(ApartmentId);
-            return Ok(comments);
+            var map = _Mapper.Map<IEnumerable<ReturnCommentDTO>>(comments);
+            return Ok(map);
+
         }
 
 
         [Authorize]
         [HttpGet("{Id:int}")]
-        public async Task<ActionResult<Comment>> GetCommentById(int Id)
+        public async Task<ActionResult<ReturnCommentDTO>> GetCommentById(int Id)
         {
             var comment = await _unitOfWork.commentRepository.GetByIdAsync(Id);
             if(comment is null)
                 return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound, "Comment with this Id is not found"));
 
-            return Ok(comment);
+            var map = _Mapper.Map<ReturnCommentDTO>(comment);
+            return Ok(map);
         }
 
 

@@ -28,8 +28,6 @@ namespace Mo3tarb.APIs.PL.DTOs.AccountDTO
         [MinLength(14, ErrorMessage = "MinLength of NationalId is 14")]
         public string NationalId { get; set; }
 
-        //public IFormFile? Photo { get; set; }
-
         [Required(ErrorMessage = "WhatsappNumber is required")]
         public string WhatsappNumber { get; set; }
 

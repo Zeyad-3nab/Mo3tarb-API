@@ -25,6 +25,9 @@ namespace GraduationProject.API.PL.Mapping
 
 			CreateMap<Department, DepartmentDTO>().ReverseMap();
 			CreateMap<Comment, CommentDTO>().ReverseMap();
+            CreateMap<Comment, ReturnCommentDTO>()
+                .ForMember(src => src.UserName, opt => opt.MapFrom(e => e.User.UserName))
+                .ForMember(src => src.UserId, opt => opt.MapFrom(e => e.User.Id));
 			CreateMap<Favourite, FavouriteDTO>().ReverseMap();
 
 

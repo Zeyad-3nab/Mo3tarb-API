@@ -26,14 +26,6 @@ namespace Mo3tarb.APIs.Extensions
             Services.AddScoped<ITokenService, TokenServices>();
             Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            //Services.AddScoped<IApartmentRepository, ApartmentRepository>();
-			//Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-			//Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
-			//Services.AddScoped<ICommentRepository, CommentRepository>();
-			//Services.AddScoped<IRatingRepository, RatingRepository>();
-			//Services.AddScoped<IReportRepository, ReportRepository>();
-
-
             Services.AddAutoMapper(M => M.AddProfile(new Applicationprofile(configuration)));
 
             Services.AddIdentity<AppUser, IdentityRole>
@@ -51,7 +43,6 @@ namespace Mo3tarb.APIs.Extensions
 
 
             return Services;
-
 		}
 	}
 }

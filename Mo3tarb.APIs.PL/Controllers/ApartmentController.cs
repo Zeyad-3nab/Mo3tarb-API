@@ -92,7 +92,7 @@ namespace Mo3tarb.APIs.PL.Controllers
                , ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
 
 
-            var apartment = new Apartment()   //    Can't use auto mapper because not all data in apartment in apartmentDTO Like(Distance , Image , UserId)
+            var apartment = new Apartment()  
             {
                 City = apartmentDTO.City,
                 Village= apartmentDTO.Village,
